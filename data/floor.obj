@@ -1,0 +1,17 @@
+v -200.0 0.0  200.0
+v  200.0 0.0  200.0
+v -200.0 0.0 -200.0
+v  200.0 0.0 -200.0
+
+# Texture coordinates to cover the plane
+vt 0.0 0.0
+vt 200.0 0.0
+vt 0.0 200.0
+vt 200.0 1.0
+
+# Normals
+vn 0.0 1.0 0.0
+
+# Faces with vertices, texture coordinates, and normals
+f 1/1/1 2/2/1 4/4/1
+f 1/1/1 4/4/1 3/3/1

@@ -1,0 +1,181 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\0320\\source\\repos\\GC_final3\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\source\\repos\\GC_final3\\textclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:textclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\source\\repos\\GC_final3\\textclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:textclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\source\\repos\\GC_final3\\graphicsclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:graphicsclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\source\\repos\\GC_final3\\systemclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:systemclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\source\\repos\\GC_final3\\graphicsclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:graphicsclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\source\\repos\\GC_final3\\cameraclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:cameraclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\source\\repos\\GC_final3\\systemclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:systemclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\source\\repos\\GC_final3\\inputclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:inputclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\source\\repos\\GC_final3\\inputclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:inputclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\source\\repos\\GC_final3\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "textclass.h",
+              "DocumentMoniker": "C:\\Users\\0320\\source\\repos\\GC_final3\\textclass.h",
+              "RelativeDocumentMoniker": "textclass.h",
+              "ToolTip": "C:\\Users\\0320\\source\\repos\\GC_final3\\textclass.h",
+              "RelativeToolTip": "textclass.h",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAAD0AAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-12-11T16:02:54.707Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "textclass.cpp",
+              "DocumentMoniker": "C:\\Users\\0320\\source\\repos\\GC_final3\\textclass.cpp",
+              "RelativeDocumentMoniker": "textclass.cpp",
+              "ToolTip": "C:\\Users\\0320\\source\\repos\\GC_final3\\textclass.cpp",
+              "RelativeToolTip": "textclass.cpp",
+              "ViewState": "AgIAAJ8AAAAAAAAAAAAAAK4AAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-12-11T16:01:49.364Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "systemclass.h",
+              "DocumentMoniker": "C:\\Users\\0320\\source\\repos\\GC_final3\\systemclass.h",
+              "RelativeDocumentMoniker": "systemclass.h",
+              "ToolTip": "C:\\Users\\0320\\source\\repos\\GC_final3\\systemclass.h",
+              "RelativeToolTip": "systemclass.h",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAAAC4AAAALAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-12-11T15:30:35.591Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "graphicsclass.h",
+              "DocumentMoniker": "C:\\Users\\0320\\source\\repos\\GC_final3\\graphicsclass.h",
+              "RelativeDocumentMoniker": "graphicsclass.h",
+              "ToolTip": "C:\\Users\\0320\\source\\repos\\GC_final3\\graphicsclass.h",
+              "RelativeToolTip": "graphicsclass.h",
+              "ViewState": "AgIAADkAAAAAAAAAAAAAAF0AAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-12-11T08:42:06.747Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "graphicsclass.cpp",
+              "DocumentMoniker": "C:\\Users\\0320\\source\\repos\\GC_final3\\graphicsclass.cpp",
+              "RelativeDocumentMoniker": "graphicsclass.cpp",
+              "ToolTip": "C:\\Users\\0320\\source\\repos\\GC_final3\\graphicsclass.cpp",
+              "RelativeToolTip": "graphicsclass.cpp",
+              "ViewState": "AgIAAP4BAAAAAAAAAAAAABkCAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-12-11T08:36:55.113Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "systemclass.cpp",
+              "DocumentMoniker": "C:\\Users\\0320\\source\\repos\\GC_final3\\systemclass.cpp",
+              "RelativeDocumentMoniker": "systemclass.cpp",
+              "ToolTip": "C:\\Users\\0320\\source\\repos\\GC_final3\\systemclass.cpp",
+              "RelativeToolTip": "systemclass.cpp",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAABAAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-12-11T08:42:34.916Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "cameraclass.cpp",
+              "DocumentMoniker": "C:\\Users\\0320\\source\\repos\\GC_final3\\cameraclass.cpp",
+              "RelativeDocumentMoniker": "cameraclass.cpp",
+              "ToolTip": "C:\\Users\\0320\\source\\repos\\GC_final3\\cameraclass.cpp",
+              "RelativeToolTip": "cameraclass.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-12-11T09:24:05.08Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "inputclass.h",
+              "DocumentMoniker": "C:\\Users\\0320\\source\\repos\\GC_final3\\inputclass.h",
+              "RelativeDocumentMoniker": "inputclass.h",
+              "ToolTip": "C:\\Users\\0320\\source\\repos\\GC_final3\\inputclass.h",
+              "RelativeToolTip": "inputclass.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-12-11T08:21:41.809Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "inputclass.cpp",
+              "DocumentMoniker": "C:\\Users\\0320\\source\\repos\\GC_final3\\inputclass.cpp",
+              "RelativeDocumentMoniker": "inputclass.cpp",
+              "ToolTip": "C:\\Users\\0320\\source\\repos\\GC_final3\\inputclass.cpp",
+              "RelativeToolTip": "inputclass.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-12-11T08:21:34.775Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Users\\0320\\source\\repos\\GC_final3\\main.cpp",
+              "RelativeDocumentMoniker": "main.cpp",
+              "ToolTip": "C:\\Users\\0320\\source\\repos\\GC_final3\\main.cpp",
+              "RelativeToolTip": "main.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvxoAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-12-11T08:20:33.385Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
