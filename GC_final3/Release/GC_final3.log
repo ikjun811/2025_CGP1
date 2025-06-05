@@ -1,8 +1,9 @@
-﻿  main.cpp
-  systemclass.cpp
+﻿  graphicsclass.cpp
   코드를 생성하고 있습니다.
-  93 of 377 functions (24.7%) were compiled, the rest were copied from previous compilation.
-    4 functions were new in current compilation
-    37 functions had inline decision re-evaluated but remain unchanged
+  2 of 423 functions ( 0.5%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    4 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  GC_final3.vcxproj -> C:\Users\0320\source\repos\GC_final3\Release\GC_final3.exe
+  GC_final3.vcxproj -> C:\Users\0320\Documents\GitHub\2025_CGP1\Release\GC_final3.exe
+  'pwsh.exe'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는
+  배치 파일이 아닙니다.

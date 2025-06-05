@@ -1,0 +1,30 @@
+# Visual Studio IntelliSense Precompiled Header cache
+*.ipch
+
+# Visual Studio user specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Bb]in/
+[Dd]ebug/
+[Rr]elease/
+x64/
+Win32/
+[Oo]bj/
+*.obj
+*.pdb
+*.ilk
+*.exe
+*.dll
+*.lib
+*.ncb
+*.sbr
+
+# Other common temporary files
+*.tlog
+*.log
+_UpgradeReport_Files/
+UpgradeLog.XML

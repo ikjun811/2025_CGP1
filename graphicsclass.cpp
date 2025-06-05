@@ -204,8 +204,11 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Initialize a base view matrix with the camera for 2D user interface rendering.
 //	m_Camera->SetPosition(0.0f, 0.0f, -1.0f);
-	m_Camera->Render();
-	m_Camera->GetViewMatrix(baseViewMatrix);
+
+	XMVECTOR eye = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f); // Z축에서 약간 뒤
+	XMVECTOR at = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);  // 원점
+	XMVECTOR up_vec = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f); // Y축 위
+	baseViewMatrix = XMMatrixLookAtLH(eye, at, up_vec);
 
 	// Create the text object.
 	m_Text = new TextClass;
@@ -324,8 +327,10 @@ void GraphicsClass::Shutdown()
 
 
 
-bool GraphicsClass::Frame(int fps, int cpu)
+bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera)
 {
+
+
 	bool result;
 
 	float minZPosition = m_ObjectStartPosition - 5.0f;
@@ -371,7 +376,7 @@ bool GraphicsClass::Frame(int fps, int cpu)
 		return false;
 	}
 
-	result = Render(rotation);
+	result = Render(rotation, gameCamera);
 	if (!result)
 	{
 		return false;
@@ -384,7 +389,7 @@ bool GraphicsClass::Frame(int fps, int cpu)
 	return true;
 }
 
-bool GraphicsClass::Render(float rotation)
+bool GraphicsClass::Render(float rotation, CameraClass* gameCamera)
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, orthoMatrix;
 	XMMATRIX scalingMatrix, rotationMatrix;
@@ -414,10 +419,11 @@ bool GraphicsClass::Render(float rotation)
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
-	m_Camera->Render();
+	//m_Camera->Render();
+	gameCamera->GetViewMatrix(viewMatrix);
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
-	m_Camera->GetViewMatrix(viewMatrix);
+	//m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
@@ -427,7 +433,9 @@ bool GraphicsClass::Render(float rotation)
 	// Turn off the Z buffer to begin all 2D rendering.
 	m_D3D->TurnZBufferOff();
 
-	worldMatrix = XMMatrixTranslation(0.0f, 0.0f, 1.0f);
+	XMMATRIX uiWorldMatrix = XMMatrixTranslation(0.0f, 0.0f, 1.0f);
+
+	XMMATRIX uiViewMatrix = XMMatrixIdentity();
 
 
 	// Put the bitmap vertex and index buffers on the graphics pipeline to prepare them for drawing.
@@ -438,7 +446,7 @@ bool GraphicsClass::Render(float rotation)
 	}
 
 	// Render the bitmap with the texture shader.
-	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Bitmap->GetIndexCount(), worldMatrix, viewMatrix, orthoMatrix, m_Bitmap->GetTexture());
+	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Bitmap->GetIndexCount(), uiWorldMatrix, uiViewMatrix, orthoMatrix, m_Bitmap->GetTexture());
 	if (!result)
 	{
 		return false;

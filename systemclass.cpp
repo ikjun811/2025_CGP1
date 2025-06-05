@@ -11,6 +11,7 @@ SystemClass::SystemClass()
 	m_Fps = 0;
 	m_Cpu = 0;
 	m_Timer = 0;
+	m_Camera = 0;
 }
 
 
@@ -45,7 +46,23 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the input object.
-	m_Input->Initialize();
+	result = m_Input->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(m_hwnd, L"Could not initialize the input object.", L"Error", MB_OK);
+		return false;
+	}
+
+	m_Camera = new CameraClass;
+	if (!m_Camera)
+	{
+		return false;
+	}
+	// 초기 카메라 위치 및 회전 설정 (선택 사항)
+	m_Camera->SetPosition(0.0f, 1.0f, -5.0f); // 예시 위치
+	m_Camera->SetRotation(0.0f, 0.0f, 0.0f); // 초기 회전 (Pitch, Yaw, Roll)
+
+
 
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	m_Graphics = new GraphicsClass;
@@ -193,15 +210,26 @@ bool SystemClass::Frame()
 	m_Fps->Frame();
 	m_Cpu->Frame();
 
+	float frameTime = m_Timer->GetTime();
 
-	// Check if the user pressed escape and wants to exit the application.
-	if(m_Input->IsKeyDown(VK_ESCAPE))
+	if (!m_Input->Frame()) // InputClass의 Frame 함수 호출
 	{
-		return false;
+		return false; // 입력 처리 실패 시 종료
 	}
 
+
+	// Check if the user pressed escape and wants to exit the application.
+	if (m_Input->IsKeyDown(DIK_ESCAPE))
+	{
+		return false; 
+	}
+
+	m_Camera->HandleMovement(*m_Input, frameTime);
+	m_Camera->Render();
+
+
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame(m_Fps->GetFps(), m_Cpu->GetCpuPercentage());
+	result = m_Graphics->Frame(m_Fps->GetFps(), m_Cpu->GetCpuPercentage(), m_Camera);
 	if (!result)
 	{
 		return false;
@@ -215,6 +243,7 @@ LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam
 {
 	switch(umsg)
 	{
+		/*
 		// Check if a key has been pressed on the keyboard.
 		case WM_KEYDOWN:
 		{
@@ -232,6 +261,8 @@ LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam
 			m_Input->KeyUp((unsigned int)wparam);
 			return 0;
 		}
+		*/
+		
 
 		// Any other messages send to the default message handler as our application won't make use of them.
 		default:

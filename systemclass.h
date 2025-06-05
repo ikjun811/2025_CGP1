@@ -58,6 +58,7 @@ private:
 	FpsClass* m_Fps;
 	CpuClass* m_Cpu;
 	TimerClass* m_Timer;
+	CameraClass* m_Camera;
 };
 
 

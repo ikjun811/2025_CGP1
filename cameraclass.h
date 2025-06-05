@@ -12,6 +12,8 @@
 
 #include "AlignedAllocationPolicy.h"
 
+#include "inputclass.h"
+
 using namespace DirectX;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,16 +29,20 @@ public:
 	void SetPosition(float, float, float);
 	void SetRotation(float, float, float);
 
-	XMFLOAT3 GetPosition();
-	XMFLOAT3 GetRotation();
+	XMFLOAT3 GetPosition() const; 
+	XMFLOAT3 GetRotation() const; // Yaw, Pitch, Roll ¹ÝÈ¯
 
 	void Render();
-	void GetViewMatrix(XMMATRIX&);
+	void GetViewMatrix(XMMATRIX&) const;
+
+	void HandleMovement(const InputClass& input, float frameTime);
 
 private:
 	XMFLOAT3 m_position;
 	XMFLOAT3 m_rotation;
 	XMMATRIX m_viewMatrix;
+
+	float m_moveSpeed;
 };
 
 #endif

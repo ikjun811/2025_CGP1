@@ -77,11 +77,11 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame(int, int);
+	bool Frame(int fps, int cpu, CameraClass* gameCamera);
 
 
 private:
-	bool Render(float);
+	bool Render(float rotation, CameraClass* gameCamera);
 
 	float m_ObjectSpeed;
 	float m_ObjectZOffset;
