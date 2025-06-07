@@ -11,24 +11,48 @@
       "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:graphicsclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:systemclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\modelclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:modelclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:systemclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\textureshaderclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:textureshaderclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\textureclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:textureclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\modelclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:modelclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:cameraclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\inputclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:inputclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:cameraclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:systemclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:d3dclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:d3dclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:systemclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\inputclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:inputclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\inputclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -54,24 +78,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "graphicsclass.cpp",
-              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.cpp",
-              "RelativeDocumentMoniker": "graphicsclass.cpp",
-              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.cpp",
-              "RelativeToolTip": "graphicsclass.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAACAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-12-11T08:36:55.113Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 11,
               "Title": "systemclass.cpp",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.cpp",
               "RelativeDocumentMoniker": "systemclass.cpp",
@@ -84,31 +95,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "cameraclass.cpp",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.cpp",
               "RelativeDocumentMoniker": "cameraclass.cpp",
               "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.cpp",
               "RelativeToolTip": "cameraclass.cpp",
-              "ViewState": "AgIAAIEAAAAAAAAAAAAAAKAAAAAyAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-12-11T09:24:05.08Z"
+              "WhenOpened": "2024-12-11T09:24:05.08Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "inputclass.cpp",
-              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\inputclass.cpp",
-              "RelativeDocumentMoniker": "inputclass.cpp",
-              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\inputclass.cpp",
-              "RelativeToolTip": "inputclass.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-12-11T08:21:34.775Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 8,
               "Title": "systemclass.h",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.h",
               "RelativeDocumentMoniker": "systemclass.h",
@@ -121,32 +121,136 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "modelclass.h",
+              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\modelclass.h",
+              "RelativeDocumentMoniker": "modelclass.h",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\modelclass.h",
+              "RelativeToolTip": "modelclass.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-06-07T07:35:12.276Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "modelclass.cpp",
+              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\modelclass.cpp",
+              "RelativeDocumentMoniker": "modelclass.cpp",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\modelclass.cpp",
+              "RelativeToolTip": "modelclass.cpp",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAAABUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-06-07T07:35:16.398Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "graphicsclass.cpp",
+              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.cpp",
+              "RelativeDocumentMoniker": "graphicsclass.cpp",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.cpp*",
+              "RelativeToolTip": "graphicsclass.cpp*",
+              "ViewState": "AgIAAG4CAAAAAAAAAAAUwIgCAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-12-11T08:36:55.113Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
               "Title": "graphicsclass.h",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.h",
               "RelativeDocumentMoniker": "graphicsclass.h",
               "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.h",
               "RelativeToolTip": "graphicsclass.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACEAAAAAAAAAAAAAAFEAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-12-11T08:42:06.747Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 3,
+              "Title": "textureshaderclass.cpp",
+              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\textureshaderclass.cpp",
+              "RelativeDocumentMoniker": "textureshaderclass.cpp",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\textureshaderclass.cpp",
+              "RelativeToolTip": "textureshaderclass.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAALAAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-06-07T07:50:48.516Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "textureclass.cpp",
+              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\textureclass.cpp",
+              "RelativeDocumentMoniker": "textureclass.cpp",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\textureclass.cpp",
+              "RelativeToolTip": "textureclass.cpp",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-06-07T12:08:40.002Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "d3dclass.h",
+              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.h",
+              "RelativeDocumentMoniker": "d3dclass.h",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.h",
+              "RelativeToolTip": "d3dclass.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-06-07T07:34:18.324Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "d3dclass.cpp",
+              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.cpp",
+              "RelativeDocumentMoniker": "d3dclass.cpp",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.cpp",
+              "RelativeToolTip": "d3dclass.cpp",
+              "ViewState": "AgIAAMIBAAAAAAAAAAAkwN4BAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-06-07T07:34:18.99Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "cameraclass.h",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.h",
               "RelativeDocumentMoniker": "cameraclass.h",
               "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.h",
               "RelativeToolTip": "cameraclass.h",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAACwAAAATAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-06-04T14:32:48.845Z"
+              "WhenOpened": "2025-06-04T14:32:48.845Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 12,
+              "Title": "inputclass.cpp",
+              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\inputclass.cpp",
+              "RelativeDocumentMoniker": "inputclass.cpp",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\inputclass.cpp",
+              "RelativeToolTip": "inputclass.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-12-11T08:21:34.775Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "inputclass.h",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\inputclass.h",
               "RelativeDocumentMoniker": "inputclass.h",
@@ -158,7 +262,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 14,
               "Title": "textclass.cpp",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\textclass.cpp",
               "RelativeDocumentMoniker": "textclass.cpp",
@@ -170,7 +274,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 15,
               "Title": "textclass.h",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\textclass.h",
               "RelativeDocumentMoniker": "textclass.h",
@@ -182,7 +286,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 16,
               "Title": "main.cpp",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\main.cpp",
               "RelativeDocumentMoniker": "main.cpp",

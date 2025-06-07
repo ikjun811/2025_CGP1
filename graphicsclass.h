@@ -39,21 +39,8 @@ public:
 		m_D3D = 0;
 		m_Camera = 0;
 
-		m_Model[0] = 0;
-		m_Model[1] = 0;
-		m_Model[2] = 0;
-		m_Model[3] = 0;
-		m_Model[4] = 0;
-		m_Model[5] = 0;
-		m_Model[6] = 0;
-		m_Model[7] = 0;
-		m_Model[8] = 0;
-		m_Model[9] = 0;
-		m_Model[10] = 0;
-		m_Model[11] = 0;
-		m_Model[12] = 0;
-		m_Model[13] = 0;
-		m_Model[14] = 0;
+		for (int i = 0; i < 15; ++i) { m_Model[i] = nullptr; }
+		m_Character = nullptr;
 
 		m_LightShader = 0;
 		m_Light1 = 0;
@@ -92,6 +79,7 @@ private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
 	ModelClass* m_Model[15];
+	ModelClass* m_Character;
 
 	TextureShaderClass* m_TextureShader;
 	BitmapClass* m_Bitmap;

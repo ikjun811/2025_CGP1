@@ -123,6 +123,19 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	m_Character = new ModelClass;
+	if (!m_Character)
+	{
+		return false;
+	}
+
+	result = m_Character->Initialize(m_D3D->GetDevice(), L"./data/character.fbx", L"./data/character_d.dds");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the character model object.", L"Error", MB_OK);
+		return false;
+	}
+
 	/*// Create the light shader object.
 	m_LightShader = new LightShaderClass;
 	if (!m_LightShader)
@@ -259,6 +272,13 @@ void GraphicsClass::Shutdown()
 			delete m_Model[i];
 			m_Model[i] = 0;
 		}
+	}
+
+	if (m_Character)
+	{
+		m_Character->Shutdown();
+		delete m_Character;
+		m_Character = 0;
 	}
 
 	// Release the camera object.
@@ -625,7 +645,24 @@ bool GraphicsClass::Render(float rotation, CameraClass* gameCamera)
 		worldMatrix, viewMatrix, projectionMatrix, m_Model[13]->GetTexture());
 	if (!result) return false;
 
+	 scalingMatrix = XMMatrixScaling(0.1f, 0.1f, 0.1f); // 크기 조절 (필요 시)
+	 rotationMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f)); // 180도 회전하여 카메라를 보게 함
+	 translationMatrix = XMMatrixTranslation(0.0f, -1.5f, 10.0f); // 월드 좌표 (0, -1.5, 10)에 배치
 
+	// 최종 월드 행렬 계산
+	m_D3D->GetWorldMatrix(worldMatrix); // 기본 월드 행렬 가져오기
+	worldMatrix = scalingMatrix * rotationMatrix * translationMatrix;
+
+	// 캐릭터 모델의 버퍼를 파이프라인에 설정
+	m_Character->Render(m_D3D->GetDeviceContext());
+
+	// 텍스처 셰이더를 사용하여 캐릭터 모델 렌더링
+	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Character->GetIndexCount(),
+		worldMatrix, viewMatrix, projectionMatrix, m_Character->GetTexture());
+	if (!result)
+	{
+		return false;
+	}
 
 	// Present the rendered scene to the screen.
 	m_D3D->EndScene();

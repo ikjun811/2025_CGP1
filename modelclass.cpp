@@ -2,18 +2,14 @@
 // Filename: modelclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
 #include "modelclass.h"
-
+#include <string> 
 
 ModelClass::ModelClass()
 {
-	m_vertexBuffer = 0;
-	m_indexBuffer = 0;
-	m_Texture = 0;
-	m_model = 0;
-
-	m_textureCount = 0;
-	m_normalCount = 0;
-	m_faceCount = 0;
+	m_vertexBuffer = nullptr;
+	m_indexBuffer = nullptr;
+	m_Texture = nullptr;
+	m_indexCount = 0;
 }
 
 
@@ -27,27 +23,22 @@ ModelClass::~ModelClass()
 }
 
 
-bool ModelClass::Initialize(ID3D11Device* device, const WCHAR* modelFilename, const WCHAR* textureFilename)
+bool ModelClass::Initialize(ID3D11Device* device, const WCHAR* modelFilename, const WCHAR* textureFilename) 
 {
-	bool result;
-
-	// Load in the model data,
-	result = LoadModel(modelFilename);
-	if (!result)
+	// 1. 모델 데이터 로드 
+	if (!LoadModel(modelFilename))
 	{
 		return false;
 	}
 
-	// Initialize the vertex and index buffers.
-	result = InitializeBuffers(device);
-	if(!result)
+	// 2. 정점/인덱스 버퍼 생성
+	if (!InitializeBuffers(device))
 	{
 		return false;
 	}
 
-	// Load the texture for this model.
-	result = LoadTexture(device, textureFilename);
-	if(!result)
+	// 3. 텍스처 로드
+	if (!LoadTexture(device, textureFilename))
 	{
 		return false;
 	}
@@ -58,25 +49,14 @@ bool ModelClass::Initialize(ID3D11Device* device, const WCHAR* modelFilename, co
 
 void ModelClass::Shutdown()
 {
-	// Release the model texture.
 	ReleaseTexture();
-
-	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
-
-	// Release the model data.
-	ReleaseModel();
-
-	return;
 }
 
 
 void ModelClass::Render(ID3D11DeviceContext* deviceContext)
 {
-	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	RenderBuffers(deviceContext);
-
-	return;
 }
 
 
@@ -84,6 +64,7 @@ int ModelClass::GetIndexCount()
 {
 	return m_indexCount;
 }
+
 
 
 ID3D11ShaderResourceView* ModelClass::GetTexture()
@@ -94,464 +75,261 @@ ID3D11ShaderResourceView* ModelClass::GetTexture()
 
 bool ModelClass::InitializeBuffers(ID3D11Device* device)
 {
-	VertexType* vertices;
-	unsigned long* indices;
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
-    D3D11_SUBRESOURCE_DATA vertexData, indexData;
+	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
-	int i;
 
-	// Create the vertex array.
-	vertices = new VertexType[m_vertexCount];
-	if(!vertices)
-	{
+	if (m_vertices.empty() || m_indices.empty())
 		return false;
-	}
 
-	// Create the index array.
-	indices = new unsigned long[m_indexCount];
-	if(!indices)
-	{
-		return false;
-	}
-
-	// Load the vertex array and index array with data.
-	for (i = 0; i < m_vertexCount; i++)
-	{
-		vertices[i].position = XMFLOAT3(m_model[i].x, m_model[i].y, m_model[i].z);
-		vertices[i].texture = XMFLOAT2(m_model[i].tu, m_model[i].tv);
-		vertices[i].normal = XMFLOAT3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
-
-		indices[i] = i;
-	}
-
-	// Set up the description of the static vertex buffer.
-    vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_vertexCount;
-    vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    vertexBufferDesc.CPUAccessFlags = 0;
-    vertexBufferDesc.MiscFlags = 0;
+	// 정점 버퍼 설정
+	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_vertices.size();
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags = 0;
+	vertexBufferDesc.MiscFlags = 0;
 	vertexBufferDesc.StructureByteStride = 0;
-
-	// Give the subresource structure a pointer to the vertex data.
-    vertexData.pSysMem = vertices;
+	vertexData.pSysMem = &m_vertices[0];
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
+	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+	if (FAILED(result)) return false;
 
-	// Now create the vertex buffer.
-    result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
-	if(FAILED(result))
-	{
-		return false;
-	}
-
-	// Set up the description of the static index buffer.
-    indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount;
-    indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    indexBufferDesc.CPUAccessFlags = 0;
-    indexBufferDesc.MiscFlags = 0;
+	// 인덱스 버퍼 설정
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indices.size();
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
-
-	// Give the subresource structure a pointer to the index data.
-    indexData.pSysMem = indices;
+	indexData.pSysMem = &m_indices[0];
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
-
-	// Create the index buffer.
 	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
-	if(FAILED(result))
-	{
-		return false;
-	}
+	if (FAILED(result)) return false;
 
-	// Release the arrays now that the vertex and index buffers have been created and loaded.
-	delete [] vertices;
-	vertices = 0;
+	m_indexCount = m_indices.size();
 
-	delete [] indices;
-	indices = 0;
+	// 버퍼 생성 후 CPU 메모리는 비워도 됩니다. (선택사항)
+	m_vertices.clear();
+	m_indices.clear();
 
 	return true;
 }
 
-
 void ModelClass::ShutdownBuffers()
 {
-	// Release the index buffer.
-	if(m_indexBuffer)
-	{
-		m_indexBuffer->Release();
-		m_indexBuffer = 0;
-	}
-
-	// Release the vertex buffer.
-	if(m_vertexBuffer)
-	{
-		m_vertexBuffer->Release();
-		m_vertexBuffer = 0;
-	}
-
-	return;
+	if (m_indexBuffer) { m_indexBuffer->Release(); m_indexBuffer = nullptr; }
+	if (m_vertexBuffer) { m_vertexBuffer->Release(); m_vertexBuffer = nullptr; }
 }
 
 
 void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 {
-	unsigned int stride;
-	unsigned int offset;
-
-
-	// Set vertex buffer stride and offset.
-	stride = sizeof(VertexType); 
-	offset = 0;
-    
-	// Set the vertex buffer to active in the input assembler so it can be rendered.
+	unsigned int stride = sizeof(VertexType);
+	unsigned int offset = 0;
 	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
-
-    // Set the index buffer to active in the input assembler so it can be rendered.
 	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
-    // Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	return;
 }
 
 
 bool ModelClass::LoadTexture(ID3D11Device* device, const WCHAR* filename)
 {
-	bool result;
-
-
-	// Create the texture object.
 	m_Texture = new TextureClass;
-	if(!m_Texture)
-	{
-		return false;
-	}
-
-	// Initialize the texture object.
-	result = m_Texture->Initialize(device, filename);
-	if(!result)
-	{
-		return false;
-	}
-
-	return true;
+	if (!m_Texture) return false;
+	return m_Texture->Initialize(device, filename);
 }
-
 
 void ModelClass::ReleaseTexture()
 {
-	// Release the texture object.
-	if(m_Texture)
+	if (m_Texture)
 	{
 		m_Texture->Shutdown();
 		delete m_Texture;
-		m_Texture = 0;
+		m_Texture = nullptr;
 	}
-
-	return;
 }
 
 bool ModelClass::LoadModel(const WCHAR* filename)
 {
-	ReadFileCounts(filename);
+	std::wstring ws(filename);
+	std::string filename_str(ws.begin(), ws.end());
 
-	return true;
-}
-
-void ModelClass::ReleaseModel()
-{
-	if (m_model)
-	{
-		delete[] m_model;
-		m_model = 0;
+	// 파일 확장자를 소문자로 변환하여 비교
+	std::string extension = filename_str.substr(filename_str.find_last_of(".") + 1);
+	for (char& c : extension) {
+		c = tolower(c);
 	}
 
-	return;
+	if (extension == "obj")
+	{
+		return LoadModelFromObj(filename);
+	}
+	else
+	{
+		// .fbx를 포함한 다른 모든 형식은 Assimp로 시도
+		return LoadModelWithAssimp(filename);
+	}
 }
 
-bool ModelClass::ReadFileCounts(const WCHAR* filename)
+bool ModelClass::LoadModelWithAssimp(const WCHAR* filename)
 {
-	ifstream fin;
-	char input;
-	// Initialize the counts.
-	int vertexCount = 0;
-	int textureCount = 0;
-	int normalCount = 0;
-	int faceCount = 0;
-	// Open the file.
-	fin.open(filename);
-	// Check if it was successful in opening the file.
-	if (fin.fail() == true)
+	Assimp::Importer importer;
+	std::wstring ws(filename);
+	std::string filename_str(ws.begin(), ws.end());
+
+	const aiScene* pScene = importer.ReadFile(filename_str, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_GenSmoothNormals);
+	if (!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode)
 	{
 		return false;
 	}
-	// Read from the file and continue to read until the end of the file is reached.
-	fin.get(input);
-	while (!fin.eof())
+
+	// 이 예제에서는 첫 번째 메시만 로드합니다. (나중에 여러 메시 로드로 확장 가능)
+	if (pScene->mNumMeshes == 0) return false;
+	aiMesh* pMesh = pScene->mMeshes[0];
+
+	// 정점 데이터 채우기
+	m_vertices.resize(pMesh->mNumVertices);
+	for (unsigned int i = 0; i < pMesh->mNumVertices; i++)
 	{
-		// If the line starts with 'v' then count either the vertex, the texture coordinates, or the normal vector.
-		if (input == 'v')
-		{
-			fin.get(input);
-			if (input == ' ') { vertexCount++; }
-			if (input == 't') { textureCount++; }
-			if (input == 'n') { normalCount++; }
-		}
+		m_vertices[i].position = XMFLOAT3(pMesh->mVertices[i].x, pMesh->mVertices[i].y, pMesh->mVertices[i].z);
 
-		// If the line starts with 'f' then increment the face count.
-		if (input == 'f')
-		{
-			fin.get(input);
-			if (input == ' ') { faceCount++; }
-		}
+		if (pMesh->HasNormals())
+			m_vertices[i].normal = XMFLOAT3(pMesh->mNormals[i].x, pMesh->mNormals[i].y, pMesh->mNormals[i].z);
+		else
+			m_vertices[i].normal = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
-		// Otherwise read in the remainder of the line.
-		while (input != '\n')
-		{
-			fin.get(input);
-			if (fin.eof())
-				break;
-		}
-
-		// Start reading the beginning of the next line.
-		fin.get(input);
+		if (pMesh->HasTextureCoords(0))
+			m_vertices[i].texture = XMFLOAT2(pMesh->mTextureCoords[0][i].x, pMesh->mTextureCoords[0][i].y);
+		else
+			m_vertices[i].texture = XMFLOAT2(0.0f, 0.0f);
 	}
-	// Close the file.
-	fin.close();
 
-	LoadDataStructures(filename, vertexCount, textureCount, normalCount, faceCount);
+	// 인덱스 데이터 채우기
+	for (unsigned int i = 0; i < pMesh->mNumFaces; i++)
+	{
+		aiFace face = pMesh->mFaces[i];
+		for (unsigned int j = 0; j < face.mNumIndices; j++)
+			m_indices.push_back(face.mIndices[j]);
+	}
 
 	return true;
 }
+
+// --- 기존 OBJ 로더 구현 ---
+bool ModelClass::LoadModelFromObj(const WCHAR* filename)
+{
+	int vertexCount, textureCount, normalCount, faceCount;
+	if (!ReadFileCounts(filename, vertexCount, textureCount, normalCount, faceCount))
+	{
+		return false;
+	}
+	return LoadDataStructures(filename, vertexCount, textureCount, normalCount, faceCount);
+}
+
+
+bool ModelClass::ReadFileCounts(const WCHAR* filename, int& vertexCount, int& textureCount, int& normalCount, int& faceCount)
+{
+	std::ifstream fin;
+	char input;
+	vertexCount = 0; textureCount = 0; normalCount = 0; faceCount = 0;
+
+	fin.open(filename);
+	if (fin.fail()) return false;
+
+	fin.get(input);
+	while (!fin.eof())
+	{
+		if (input == 'v')
+		{
+			fin.get(input);
+			if (input == ' ') vertexCount++;
+			if (input == 't') textureCount++;
+			if (input == 'n') normalCount++;
+		}
+		else if (input == 'f')
+		{
+			fin.get(input);
+			if (input == ' ') faceCount++;
+		}
+
+		while (input != '\n' && !fin.eof())
+			fin.get(input);
+
+		fin.get(input);
+	}
+	fin.close();
+	return true;
+}
+
 
 bool ModelClass::LoadDataStructures(const WCHAR* filename, int vertexCount, int textureCount, int normalCount, int faceCount)
 {
-	XMFLOAT3 *vertices, *texcoords, *normals;
-	FaceType* faces;
-	ifstream fin;
-	int vertexIndex, texcoordIndex, normalIndex, faceIndex, vIndex, tIndex, nIndex;
+	std::vector<XMFLOAT3> temp_vertices(vertexCount);
+	std::vector<XMFLOAT2> temp_texcoords(textureCount);
+	std::vector<XMFLOAT3> temp_normals(normalCount);
+	std::vector<FaceType> faces(faceCount);
+
+	std::ifstream fin;
 	char input, input2;
-	ofstream fout;
+	int vIndex, tIndex, nIndex, fIndex;
 
-	// Initialize the four data structures.
-	vertices = new XMFLOAT3[vertexCount];
-	if (!vertices)
-	{
-		return false;
-	}
-
-	texcoords = new XMFLOAT3[textureCount];
-	if (!texcoords)
-	{
-		return false;
-	}
-
-	normals = new XMFLOAT3[normalCount];
-	if (!normals)
-	{
-		return false;
-	}
-
-	faces = new FaceType[faceCount];
-	if (!faces)
-	{
-		return false;
-	}
-
-	// Initialize the indexes.
-	vertexIndex = 0;
-	texcoordIndex = 0;
-	normalIndex = 0;
-	faceIndex = 0;
-
-	// Open the file.
 	fin.open(filename);
+	if (fin.fail()) return false;
 
-	// Check if it was successful in opening the file.
-	if (fin.fail() == true)
-	{
-		return false;
-	}
+	vIndex = 0; tIndex = 0; nIndex = 0; fIndex = 0;
 
-	// Read in the vertices, texture coordinates, and normals into the data structures.
-	// Important: Also convert to left hand coordinate system since Maya uses right hand coordinate system.
 	fin.get(input);
 	while (!fin.eof())
 	{
 		if (input == 'v')
 		{
 			fin.get(input);
-
-			// Read in the vertices.
-			if (input == ' ')
-			{
-				fin >> vertices[vertexIndex].x >> vertices[vertexIndex].y >>
-					vertices[vertexIndex].z;
-
-				// Invert the Z vertex to change to left hand system.
-				vertices[vertexIndex].z = vertices[vertexIndex].z * -1.0f;
-				vertexIndex++;
-			}
-
-			// Read in the texture uv coordinates.
-			if (input == 't')
-			{
-				fin >> texcoords[texcoordIndex].x >> texcoords[texcoordIndex].y;
-				// Invert the V texture coordinates to left hand system.
-				texcoords[texcoordIndex].y = 1.0f - texcoords[texcoordIndex].y;
-				texcoordIndex++;
-			}
-
-			// Read in the normals.
-			if (input == 'n')
-			{
-				fin >> normals[normalIndex].x >> normals[normalIndex].y >>
-					normals[normalIndex].z;
-
-				// Invert the Z normal to change to left hand system.
-				normals[normalIndex].z = normals[normalIndex].z * -1.0f;
-				normalIndex++;
-			}
+			if (input == ' ') { fin >> temp_vertices[vIndex].x >> temp_vertices[vIndex].y >> temp_vertices[vIndex].z; temp_vertices[vIndex].z *= -1.0f; vIndex++; }
+			if (input == 't') { fin >> temp_texcoords[tIndex].x >> temp_texcoords[tIndex].y; temp_texcoords[tIndex].y = 1.0f - temp_texcoords[tIndex].y; tIndex++; }
+			if (input == 'n') { fin >> temp_normals[nIndex].x >> temp_normals[nIndex].y >> temp_normals[nIndex].z; temp_normals[nIndex].z *= -1.0f; nIndex++; }
 		}
-
-		// Read in the faces.
-		if (input == 'f')
+		else if (input == 'f')
 		{
 			fin.get(input);
 			if (input == ' ')
 			{
-				// Read the face data in backwards to convert it to a left hand system from right hand system.
-				fin >> faces[faceIndex].vIndex3 >> input2 >> faces[faceIndex].tIndex3 >>
-					input2 >> faces[faceIndex].nIndex3 >> faces[faceIndex].vIndex2 >> input2 >>
-					faces[faceIndex].tIndex2 >> input2 >> faces[faceIndex].nIndex2 >>
-					faces[faceIndex].vIndex1 >> input2 >> faces[faceIndex].tIndex1 >> input2 >>
-					faces[faceIndex].nIndex1;
-				faceIndex++;
+				fin >> faces[fIndex].vIndex3 >> input2 >> faces[fIndex].tIndex3 >> input2 >> faces[fIndex].nIndex3
+					>> faces[fIndex].vIndex2 >> input2 >> faces[fIndex].tIndex2 >> input2 >> faces[fIndex].nIndex2
+					>> faces[fIndex].vIndex1 >> input2 >> faces[fIndex].tIndex1 >> input2 >> faces[fIndex].nIndex1;
+				fIndex++;
 			}
 		}
 
-		// Read in the remainder of the line.
-		while (input != '\n')
-		{
+		while (input != '\n' && !fin.eof())
 			fin.get(input);
-			if (fin.eof())
-				break;
-		}
 
-		// Start reading the beginning of the next line.
 		fin.get(input);
 	}
+	fin.close();
 
-	//// Close the file.
-	//fin.close();
-	//// Open the output file.
-	//fout.open("model.txt");
-	//// Write out the file header that our model format uses.
-	//fout << "Vertex Count: " << (faceCount * 3) << endl;
-	//fout << endl;
-	//fout << "Data:" << endl;
-	//fout << endl;
-
-	m_vertexCount = faceCount * 3;
-
-	// Set the number of indices to be the same as the vertex count.
-	m_indexCount = m_vertexCount;
-
-	// Create the model using the vertex count that was read in.
-	m_model = new ModelType[m_vertexCount];
-	if (!m_model)
+	// OBJ 파일은 인덱싱이 복잡하므로, 이전 방식처럼 정점을 중복 생성합니다.
+	// (이 부분을 개선하려면 Assimp같은 복잡한 인덱싱 재구성 로직이 필요합니다)
+	for (int i = 0; i < faceCount; i++)
 	{
-		return false;
+		// Vertex 1
+		vIndex = faces[i].vIndex1 - 1; tIndex = faces[i].tIndex1 - 1; nIndex = faces[i].nIndex1 - 1;
+		m_vertices.push_back({ temp_vertices[vIndex], temp_texcoords[tIndex], temp_normals[nIndex] });
+
+		// Vertex 2
+		vIndex = faces[i].vIndex2 - 1; tIndex = faces[i].tIndex2 - 1; nIndex = faces[i].nIndex2 - 1;
+		m_vertices.push_back({ temp_vertices[vIndex], temp_texcoords[tIndex], temp_normals[nIndex] });
+
+		// Vertex 3
+		vIndex = faces[i].vIndex3 - 1; tIndex = faces[i].tIndex3 - 1; nIndex = faces[i].nIndex3 - 1;
+		m_vertices.push_back({ temp_vertices[vIndex], temp_texcoords[tIndex], temp_normals[nIndex] });
 	}
 
-	// Now loop through all the faces and output the three vertices for each face.
-	for (int i = 0; i < faceIndex; i++)
-	{
-		vIndex = faces[i].vIndex1 - 1;
-		tIndex = faces[i].tIndex1 - 1;
-		nIndex = faces[i].nIndex1 - 1;
-		//fout << vertices[vIndex].x << ' ' << vertices[vIndex].y << ' ' << vertices[vIndex].z << ' '
-		//	<< texcoords[tIndex].x << ' ' << texcoords[tIndex].y << ' '
-		//	<< normals[nIndex].x << ' ' << normals[nIndex].y << ' ' << normals[nIndex].z << endl;
-
-		m_model[i * 3].x = vertices[vIndex].x;
-		m_model[i * 3].y = vertices[vIndex].y;
-		m_model[i * 3].z = vertices[vIndex].z;
-
-		m_model[i * 3].tu = texcoords[tIndex].x;
-		m_model[i * 3].tv = texcoords[tIndex].y;
-
-		m_model[i * 3].nx = normals[nIndex].x;
-		m_model[i * 3].ny = normals[nIndex].y;
-		m_model[i * 3].nz = normals[nIndex].z;
-
-		vIndex = faces[i].vIndex2 - 1;
-		tIndex = faces[i].tIndex2 - 1;
-		nIndex = faces[i].nIndex2 - 1;
-		//fout << vertices[vIndex].x << ' ' << vertices[vIndex].y << ' ' << vertices[vIndex].z << ' '
-		//	<< texcoords[tIndex].x << ' ' << texcoords[tIndex].y << ' '
-		//	<< normals[nIndex].x << ' ' << normals[nIndex].y << ' ' << normals[nIndex].z << endl;
-
-		m_model[i * 3 + 1].x = vertices[vIndex].x;
-		m_model[i * 3 + 1].y = vertices[vIndex].y;
-		m_model[i * 3 + 1].z = vertices[vIndex].z;
-
-		m_model[i * 3 + 1].tu = texcoords[tIndex].x;
-		m_model[i * 3 + 1].tv = texcoords[tIndex].y;
-
-		m_model[i * 3 + 1].nx = normals[nIndex].x;
-		m_model[i * 3 + 1].ny = normals[nIndex].y;
-		m_model[i * 3 + 1].nz = normals[nIndex].z;
-
-		vIndex = faces[i].vIndex3 - 1;
-		tIndex = faces[i].tIndex3 - 1;
-		nIndex = faces[i].nIndex3 - 1;
-		//fout << vertices[vIndex].x << ' ' << vertices[vIndex].y << ' ' << vertices[vIndex].z << ' '
-		//	<< texcoords[tIndex].x << ' ' << texcoords[tIndex].y << ' '
-		//	<< normals[nIndex].x << ' ' << normals[nIndex].y << ' ' << normals[nIndex].z << endl;
-
-		m_model[i * 3 + 2].x = vertices[vIndex].x;
-		m_model[i * 3 + 2].y = vertices[vIndex].y;
-		m_model[i * 3 + 2].z = vertices[vIndex].z;
-
-		m_model[i * 3 + 2].tu = texcoords[tIndex].x;
-		m_model[i * 3 + 2].tv = texcoords[tIndex].y;
-
-		m_model[i * 3 + 2].nx = normals[nIndex].x;
-		m_model[i * 3 + 2].ny = normals[nIndex].y;
-		m_model[i * 3 + 2].nz = normals[nIndex].z;
-	}
-
-	//// Close the output file.
-	//fout.close();
-
-	// Release the four data structures.
-	if (vertices)
-	{
-		delete[] vertices;
-		vertices = 0;
-	}
-
-	if (texcoords)
-	{
-		delete[] texcoords;
-		texcoords = 0;
-	}
-
-	if (normals)
-	{
-		delete[] normals;
-		normals = 0;
-	}
-
-	if (faces)
-	{
-		delete[] faces;
-		faces = 0;
+	// OBJ 로더는 인덱스 버퍼를 사용하지 않는 것처럼 처리합니다. (정점 중복)
+	m_indices.resize(m_vertices.size());
+	for (size_t i = 0; i < m_vertices.size(); ++i) {
+		m_indices[i] = i;
 	}
 
 	return true;
