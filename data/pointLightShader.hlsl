@@ -1,113 +1,101 @@
-// DEFINES //
-#define NUM_LIGHTS 3
+#define NUM_LIGHTS 4 
 
-// GLOBALS //
-cbuffer MatrixBuffer
+// -- 상수 버퍼 (Constant Buffers) --
+
+// Vertex Shader에서 사용할 행렬 버퍼
+cbuffer MatrixBuffer : register(b0)
 {
-	matrix worldMatrix;
-	matrix viewMatrix;
-	matrix projectionMatrix;
+    matrix worldMatrix;
+    matrix viewMatrix;
+    matrix projectionMatrix;
 };
 
-cbuffer LightPositionBuffer
+// Pixel Shader에서 사용할 광원 정보 버퍼
+// (하나의 버퍼로 통합하여 관리)
+struct Light
 {
-	float4 lightPosition[NUM_LIGHTS];
+    float4 diffuseColor;
+    float4 lightPosition;
 };
 
-cbuffer LightColorBuffer
+cbuffer LightBuffer : register(b1) // 슬롯 1번 사용
 {
-	float4 diffuseColor[NUM_LIGHTS];
+    Light lights[NUM_LIGHTS];
 };
 
-Texture2D shaderTexture;
-SamplerState SampleType;
 
-// TYPEDEFS //
+// -- 리소스 --
+Texture2D shaderTexture : register(t0);
+SamplerState SampleType : register(s0);
+
+
+// -- 데이터 구조체 (Typedefs) --
+
 struct VertexInputType
 {
     float4 position : POSITION;
     float2 tex : TEXCOORD0;
-   	float3 normal : NORMAL;
+    float3 normal : NORMAL;
 };
 
+// VS -> PS로 전달할 데이터가 훨씬 간단해집니다.
 struct PixelInputType
 {
     float4 position : SV_POSITION;
     float2 tex : TEXCOORD0;
-	float3 normal : NORMAL;
-	float3 lightPos1 : TEXCOORD1;
-	float3 lightPos2 : TEXCOORD2;
-	float3 lightPos3 : TEXCOORD3;
-	float3 lightPos4 : TEXCOORD4;
+    float3 normal : NORMAL;
+    float3 worldPosition : TEXCOORD1; // 월드 좌표만 전달
 };
 
-// Vertex Shader
+
+// -- Vertex Shader --
 PixelInputType LightVertexShader(VertexInputType input)
 {
     PixelInputType output;
-   	float4 worldPosition;
-
-
-	// Change the position vector to be 4 units for proper matrix calculations.
+   
     input.position.w = 1.0f;
 
-	// Calculate the position of the vertex against the world, view, and projection matrices.
+	// 최종 스크린 좌표 계산
     output.position = mul(input.position, worldMatrix);
     output.position = mul(output.position, viewMatrix);
     output.position = mul(output.position, projectionMatrix);
     
-	// Store the texture coordinates for the pixel shader.
-	output.tex = input.tex;
+	// 텍스처 좌표 전달
+    output.tex = input.tex;
     
-	// Calculate the normal vector against the world matrix only.
-	output.normal = mul(input.normal, (float3x3)worldMatrix);
-	
-	// Normalize the normal vector.
-	output.normal = normalize(output.normal);
-	
-    // Calculate the position of the vertex in the world.
-    worldPosition = mul(input.position, worldMatrix);
+	// 법선을 월드 공간으로 변환하고 정규화
+    output.normal = mul(input.normal, (float3x3) worldMatrix);
+    output.normal = normalize(output.normal);
 
-    // Determine the light positions based on the position of the lights and the position of the vertex in the world.
-    output.lightPos1.xyz = lightPosition[0].xyz - worldPosition.xyz;
-    output.lightPos2.xyz = lightPosition[1].xyz - worldPosition.xyz;
-    output.lightPos3.xyz = lightPosition[2].xyz - worldPosition.xyz;
-    output.lightPos4.xyz = lightPosition[3].xyz - worldPosition.xyz;
-
-    // Normalize the light position vectors.
-    output.lightPos1 = normalize(output.lightPos1);
-    output.lightPos2 = normalize(output.lightPos2);
-    output.lightPos3 = normalize(output.lightPos3);
-    output.lightPos4 = normalize(output.lightPos4);
+    // 정점의 월드 좌표 계산하여 전달
+    output.worldPosition = mul(input.position, worldMatrix).xyz;
 
     return output;
 }
 
-// Pixel Shader
+
+// -- Pixel Shader --
 float4 LightPixelShader(PixelInputType input) : SV_TARGET
 {
-	float4 textureColor;
-	float lightIntensity1, lightIntensity2, lightIntensity3, lightIntensity4;
-	float4 color, color1, color2, color3, color4;
-	
+    // 텍스처에서 기본 색상 가져오기
+    float4 textureColor = shaderTexture.Sample(SampleType, input.tex);
+    
+    // 최종 색상을 더해갈 변수 (기본값은 검은색)
+    float4 finalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Calculate the different amounts of light on this pixel based on the positions of the lights.
-	lightIntensity1 = saturate(dot(input.normal, input.lightPos1));
-	lightIntensity2 = saturate(dot(input.normal, input.lightPos2));
-	lightIntensity3 = saturate(dot(input.normal, input.lightPos3));
-	lightIntensity4 = saturate(dot(input.normal, input.lightPos4));
-	
-	// Determine the diffuse color amount of each of the four lights.
-	color1 = diffuseColor[0] * lightIntensity1;
-	color2 = diffuseColor[1] * lightIntensity2;
-	color3 = diffuseColor[2] * lightIntensity3;
-	color4 = diffuseColor[3] * lightIntensity4;
+    // 모든 광원에 대해 조명 계산을 반복합니다.
+    for (int i = 0; i < NUM_LIGHTS; i++)
+    {
+        // 1. 광원 방향 벡터 계산
+        float3 lightDir = normalize(lights[i].lightPosition.xyz - input.worldPosition);
 
-	// Sample the texture pixel at this location.
-	textureColor = shaderTexture.Sample(SampleType, input.tex);
+        // 2. 빛의 세기 계산 (램버트 조명 모델)
+        float lightIntensity = saturate(dot(input.normal, lightDir));
 
-	// Multiply the texture pixel by the combination of all four light colors to get the final result.
-	color = saturate(color1 + color2 + color3 + color4) * textureColor;
-	
-	return color;
+        // 3. 이 광원에 의한 색상 기여도 계산
+        finalColor += lights[i].diffuseColor * lightIntensity;
+    }
+
+    // 모든 광원의 기여도를 합친 후 텍스처 색상과 곱하고, 범위를 0~1로 제한합니다.
+    return saturate(finalColor) * textureColor;
 }

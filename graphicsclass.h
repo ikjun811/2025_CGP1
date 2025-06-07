@@ -13,11 +13,13 @@
 #include "modelclass.h"
 #include "lightshaderclass.h"
 #include "lightclass.h"
-
 #include "textureshaderclass.h"
 #include "bitmapclass.h"
 #include "textclass.h"
 
+#include <vector>
+#include <string>
+#include <memory>
 
 /////////////
 // GLOBALS //
@@ -28,47 +30,35 @@ const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f;
 
 
+struct SceneObjectInstance
+{
+	int modelIndex;               // m_Models 벡터에 있는 모델의 인덱스
+	XMMATRIX worldTransform;      // 객체의 월드 변환 행렬
+	bool isAnimated = false; //움직이는지
+};
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
 ////////////////////////////////////////////////////////////////////////////////
 class GraphicsClass
 {
 public:
-	GraphicsClass()
-	{
-		m_D3D = 0;
-		m_Camera = 0;
-
-		for (int i = 0; i < 15; ++i) { m_Model[i] = nullptr; }
-		m_Character = nullptr;
-
-		m_LightShader = 0;
-		m_Light1 = 0;
-		m_Light2 = 0;
-		m_Light3 = 0;
-
-
-		m_TextureShader = 0;
-		m_Bitmap = 0;
-
-		m_Text = 0;
-
-		//직선이동
-		m_ObjectStartPosition = 50.0f;
-		m_ObjectZOffset = 0.0f;
-		m_ObjectSpeed = 0.05f;
-		m_ObjectMovingForward = true;
-	}
+	GraphicsClass();
 	GraphicsClass(const GraphicsClass&);
 	~GraphicsClass();
 
-	bool Initialize(int, int, HWND);
+	bool Initialize(int screenWidth, int screenHeight, HWND hwnd);
 	void Shutdown();
 	bool Frame(int fps, int cpu, CameraClass* gameCamera);
 
 
 private:
-	bool Render(float rotation, CameraClass* gameCamera);
+	bool Render(CameraClass* gameCamera);
+
+	float m_BoatZOffset;
+	float m_BoatSpeed;
+	bool m_BoatMovingForward;
 
 	float m_ObjectSpeed;
 	float m_ObjectZOffset;
@@ -77,17 +67,22 @@ private:
 
 private:
 	D3DClass* m_D3D;
-	CameraClass* m_Camera;
-	ModelClass* m_Model[15];
-	ModelClass* m_Character;
 
+	// 고유한 모델들을 저장하는 벡터 (메모리 효율화)
+	std::vector<std::unique_ptr<ModelClass>> m_Models;
+	// 씬에 배치될 객체 인스턴스들의 목록
+	std::vector<SceneObjectInstance> m_SceneInstances;
+
+	// 셰이더 객체들
 	TextureShaderClass* m_TextureShader;
-	BitmapClass* m_Bitmap;
+	LightShaderClass* m_LightShader;
 
+	// UI 객체들
+	BitmapClass* m_Bitmap;
 	TextClass* m_Text;
 
-	LightShaderClass* m_LightShader;
-	LightClass* m_Light1, * m_Light2, * m_Light3, * m_Light4;
+	// 광원 객체들을 벡터로 관리합니다.
+	std::vector<LightClass*> m_Lights;
 };
 
 #endif
