@@ -251,7 +251,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 void GraphicsClass::Shutdown()
 {
 	// Release the model object.
-	for (int i = 0; i < 14; ++i)
+	for (int i = 0; i < 15; ++i)
 	{
 		if (m_Model[i])
 		{
@@ -291,6 +291,13 @@ void GraphicsClass::Shutdown()
 		m_TextureShader->Shutdown();
 		delete m_TextureShader;
 		m_TextureShader = 0;
+	}
+
+	if (m_Text)
+	{
+		m_Text->Shutdown();
+		delete m_Text;
+		m_Text = 0;
 	}
 
 	/*	// Release the light shader object.

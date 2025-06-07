@@ -7,24 +7,24 @@
       "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:graphicsclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:cameraclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:systemclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\inputclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:inputclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:graphicsclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:systemclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:systemclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:cameraclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\inputclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:inputclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -64,27 +64,27 @@
               "RelativeDocumentMoniker": "graphicsclass.cpp",
               "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.cpp",
               "RelativeToolTip": "graphicsclass.cpp",
-              "ViewState": "AgIAAKQBAAAAAAAAAAAkwMQBAAACAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-12-11T08:36:55.113Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "systemclass.cpp",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.cpp",
               "RelativeDocumentMoniker": "systemclass.cpp",
               "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.cpp",
               "RelativeToolTip": "systemclass.cpp",
-              "ViewState": "AgIAAMIAAAAAAAAAAAAqwOIAAAAvAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-12-11T08:42:34.916Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "cameraclass.cpp",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.cpp",
               "RelativeDocumentMoniker": "cameraclass.cpp",
@@ -92,12 +92,11 @@
               "RelativeToolTip": "cameraclass.cpp",
               "ViewState": "AgIAAIEAAAAAAAAAAAAAAKAAAAAyAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-12-11T09:24:05.08Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-11T09:24:05.08Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "inputclass.cpp",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\inputclass.cpp",
               "RelativeDocumentMoniker": "inputclass.cpp",
@@ -105,31 +104,30 @@
               "RelativeToolTip": "inputclass.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-12-11T08:21:34.775Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-11T08:21:34.775Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 2,
               "Title": "systemclass.h",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.h",
               "RelativeDocumentMoniker": "systemclass.h",
               "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.h",
               "RelativeToolTip": "systemclass.h",
-              "ViewState": "AgIAACcAAAAAAAAAAAAAADwAAAAXAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-12-11T15:30:35.591Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
               "Title": "graphicsclass.h",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.h",
               "RelativeDocumentMoniker": "graphicsclass.h",
               "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.h",
               "RelativeToolTip": "graphicsclass.h",
-              "ViewState": "AgIAADMAAAAAAAAAAAAkwFMAAAA2AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-12-11T08:42:06.747Z",
               "EditorCaption": ""
@@ -144,8 +142,7 @@
               "RelativeToolTip": "cameraclass.h",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAACwAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-06-04T14:32:48.845Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-04T14:32:48.845Z"
             },
             {
               "$type": "Document",
@@ -157,8 +154,7 @@
               "RelativeToolTip": "inputclass.h",
               "ViewState": "AgIAABIAAAAAAAAAAAAAADUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-11T08:21:41.809Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-11T08:21:41.809Z"
             },
             {
               "$type": "Document",
