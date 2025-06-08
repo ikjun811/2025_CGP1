@@ -3,20 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:graphicsclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:d3dclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:d3dclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:graphicsclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:cameraclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\lightshaderclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:lightshaderclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:graphicsclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:graphicsclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\lightshaderclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -51,14 +59,6 @@
       "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:systemclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:d3dclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:d3dclass.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{D7304691-67DF-43FD-871C-E93917CDD827}|GC_final3.vcxproj|solutionrelative:systemclass.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -90,48 +90,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "lightshaderclass.cpp",
-              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\lightshaderclass.cpp",
-              "RelativeDocumentMoniker": "lightshaderclass.cpp",
-              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\lightshaderclass.cpp",
-              "RelativeToolTip": "lightshaderclass.cpp",
-              "ViewState": "AgIAAJIAAAAAAAAAAAAkwKQAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-06-07T14:08:57.531Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "lightshaderclass.h",
-              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\lightshaderclass.h",
-              "RelativeDocumentMoniker": "lightshaderclass.h",
-              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\lightshaderclass.h",
-              "RelativeToolTip": "lightshaderclass.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-06-07T14:07:39.818Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "pointLightShader.hlsl",
-              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\data\\pointLightShader.hlsl",
-              "RelativeDocumentMoniker": "data\\pointLightShader.hlsl",
-              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\data\\pointLightShader.hlsl",
-              "RelativeToolTip": "data\\pointLightShader.hlsl",
-              "ViewState": "AgIAADYAAAAAAAAAAAAAAEoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
-              "WhenOpened": "2025-06-07T14:05:07.14Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 13,
               "Title": "systemclass.h",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\systemclass.h",
               "RelativeDocumentMoniker": "systemclass.h",
@@ -143,13 +106,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "graphicsclass.cpp",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.cpp",
               "RelativeDocumentMoniker": "graphicsclass.cpp",
-              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.cpp",
-              "RelativeToolTip": "graphicsclass.cpp",
-              "ViewState": "AgIAAC4AAAAAAAAAAAAAAFIAAAAAAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.cpp*",
+              "RelativeToolTip": "graphicsclass.cpp*",
+              "ViewState": "AgIAALEAAAAAAAAAAAAqwN4AAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-12-11T08:36:55.113Z",
               "EditorCaption": ""
@@ -162,22 +125,85 @@
               "RelativeDocumentMoniker": "graphicsclass.h",
               "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\graphicsclass.h",
               "RelativeToolTip": "graphicsclass.h",
-              "ViewState": "AgIAAFEAAAAAAAAAAAAAADYAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAACYAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-11T08:42:06.747Z"
+              "WhenOpened": "2024-12-11T08:42:06.747Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 4,
               "Title": "cameraclass.cpp",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.cpp",
               "RelativeDocumentMoniker": "cameraclass.cpp",
-              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.cpp*",
-              "RelativeToolTip": "cameraclass.cpp*",
-              "ViewState": "AgIAACoAAAAAAAAAAAAAAEkAAAAQAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.cpp",
+              "RelativeToolTip": "cameraclass.cpp",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-12-11T09:24:05.08Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "lightshaderclass.h",
+              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\lightshaderclass.h",
+              "RelativeDocumentMoniker": "lightshaderclass.h",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\lightshaderclass.h",
+              "RelativeToolTip": "lightshaderclass.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-06-07T14:07:39.818Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "d3dclass.h",
+              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.h",
+              "RelativeDocumentMoniker": "d3dclass.h",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.h",
+              "RelativeToolTip": "d3dclass.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-06-07T07:34:18.324Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "d3dclass.cpp",
+              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.cpp",
+              "RelativeDocumentMoniker": "d3dclass.cpp",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.cpp",
+              "RelativeToolTip": "d3dclass.cpp",
+              "ViewState": "AgIAAA4CAAAAAAAAAAAqwDcAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-06-07T07:34:18.99Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "pointLightShader.hlsl",
+              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\data\\pointLightShader.hlsl",
+              "RelativeDocumentMoniker": "data\\pointLightShader.hlsl",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\data\\pointLightShader.hlsl",
+              "RelativeToolTip": "data\\pointLightShader.hlsl",
+              "ViewState": "AgIAADYAAAAAAAAAAAAAAEoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
+              "WhenOpened": "2025-06-07T14:05:07.14Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "lightshaderclass.cpp",
+              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\lightshaderclass.cpp",
+              "RelativeDocumentMoniker": "lightshaderclass.cpp",
+              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\lightshaderclass.cpp",
+              "RelativeToolTip": "lightshaderclass.cpp",
+              "ViewState": "AgIAAJIAAAAAAAAAAAAkwKQAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-06-07T14:08:57.531Z"
             },
             {
               "$type": "Document",
@@ -193,7 +219,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "modelclass.h",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\modelclass.h",
               "RelativeDocumentMoniker": "modelclass.h",
@@ -205,7 +231,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "modelclass.cpp",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\modelclass.cpp",
               "RelativeDocumentMoniker": "modelclass.cpp",
@@ -217,7 +243,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "textureshaderclass.cpp",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\textureshaderclass.cpp",
               "RelativeDocumentMoniker": "textureshaderclass.cpp",
@@ -229,7 +255,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "textureclass.cpp",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\textureclass.cpp",
               "RelativeDocumentMoniker": "textureclass.cpp",
@@ -241,31 +267,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "d3dclass.h",
-              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.h",
-              "RelativeDocumentMoniker": "d3dclass.h",
-              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.h",
-              "RelativeToolTip": "d3dclass.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-06-07T07:34:18.324Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 12,
-              "Title": "d3dclass.cpp",
-              "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.cpp",
-              "RelativeDocumentMoniker": "d3dclass.cpp",
-              "ToolTip": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\d3dclass.cpp",
-              "RelativeToolTip": "d3dclass.cpp",
-              "ViewState": "AgIAAMIBAAAAAAAAAAAkwN4BAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-06-07T07:34:18.99Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
               "Title": "cameraclass.h",
               "DocumentMoniker": "C:\\Users\\0320\\Documents\\GitHub\\2025_CGP1\\cameraclass.h",
               "RelativeDocumentMoniker": "cameraclass.h",

@@ -65,7 +65,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// --- 2. 씬에 객체 인스턴스 배치 ---
 	// 로드된 모델(인덱스)을 사용하여 씬에 여러 개의 인스턴스를 배치합니다.
-	m_SceneInstances.push_back({ 0, XMMatrixTranslation(0.0f, -3.0f, 0.0f) }); // Floor
+	m_SceneInstances.push_back({ 0, XMMatrixTranslation(0.0f, -3.0f, 0.0f), false, {0.0f, -3.0f, 0.0f} }); // Floor
 
 	// Lighthouses (3개)
 	m_SceneInstances.push_back({ 1, XMMatrixScaling(0.8f, 0.8f, 0.8f) * XMMatrixTranslation(0.0f, 0.0f, 50.0f) });
@@ -77,9 +77,11 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_SceneInstances.push_back({ 2, XMMatrixScaling(3.0f, 1.0f, 4.0f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslation(0.0f, 2.0f, 25.0f) });
 
 	// Boats (3개) - 마지막 보트가 움직임
-	m_SceneInstances.push_back({ 3, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslation(-40.0f, 0.0f, 70.0f) });
-	m_SceneInstances.push_back({ 3, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslation(0.0f, 2.0f, 25.0f) }); // 다리 위의 보트
-	m_SceneInstances.push_back({ 3, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(40.0f, 0.0f, 50.0f), true }); // 움직이는 보트
+	m_SceneInstances.push_back({ 3, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslation(-40.0f, 0.0f, 70.0f), false, {-40.0f, 0.0f, 70.0f} });
+	m_SceneInstances.push_back({ 3, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslation(0.0f, 2.0f, 25.0f), false, {0.0f, 2.0f, 25.0f} });
+
+	XMVECTOR boatInitialPos = { 40.0f, 0.0f, 50.0f };
+	m_SceneInstances.push_back({ 3, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslationFromVector(boatInitialPos), true, boatInitialPos });
 
 	// Streetlights (3개)
 	m_SceneInstances.push_back({ 4, XMMatrixScaling(3.0f, 3.0f, 3.0f) * XMMatrixTranslation(-6.5f, 2.2f, 40.0f) });
@@ -110,7 +112,11 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// --- UI 객체 초기화 ---
 	m_Bitmap = new BitmapClass;
-	if (!m_Bitmap || !m_Bitmap->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, L"./data/space.dds", 200, 200)) return false; // 비트맵 크기 확인 필요 (원본 코드 참고)
+	if (!m_Bitmap || !m_Bitmap->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, L"./data/space.dds", screenWidth, screenHeight))
+	{
+		MessageBox(hwnd, L"Could not initialize the bitmap object.", L"Error", MB_OK);
+		return false;
+	}
 
 	XMMATRIX baseViewMatrix = XMMatrixLookAtLH(XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f), XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f), XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 	m_Text = new TextClass;
@@ -155,8 +161,16 @@ bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera)
 	{
 		if (instance.isAnimated)
 		{
-	
-			instance.worldTransform = XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(40.0f, 0.0f, 50.0f + m_BoatZOffset);
+
+			XMMATRIX scaleMatrix = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+
+			XMMATRIX translationMatrix = XMMatrixTranslation(
+				XMVectorGetX(instance.initialPosition),
+				XMVectorGetY(instance.initialPosition),
+				XMVectorGetZ(instance.initialPosition) + m_BoatZOffset 
+			);
+			// 3. 최종 월드 행렬을 조합합니다.
+			instance.worldTransform = scaleMatrix * translationMatrix;
 		}
 	}
 
@@ -168,27 +182,30 @@ bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera)
 
 bool GraphicsClass::Render(CameraClass* gameCamera)
 {
-	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, orthoMatrix;
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, orthoMatrix, uiViewMatrix;
 
-	gameCamera->GetViewMatrix(viewMatrix); // 3D 씬을 위한 뷰 행렬
-	m_D3D->GetWorldMatrix(worldMatrix); // 기본 월드 행렬
-	m_D3D->GetProjectionMatrix(projectionMatrix);
-	m_D3D->GetOrthoMatrix(orthoMatrix);
-
-	// 1. 씬 버퍼 클리어
+	// 1. 프레임 시작
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
+	gameCamera->GetViewMatrix(viewMatrix);      // 3D 씬을 위한 뷰 행렬
+	m_D3D->GetWorldMatrix(worldMatrix);         // 기본 월드 행렬
+	m_D3D->GetProjectionMatrix(projectionMatrix); // 3D 씬을 위한 투영 행렬
+	m_D3D->GetOrthoMatrix(orthoMatrix);         // 2D 렌더링을 위한 직교 행렬
+
+	uiViewMatrix = XMMatrixLookAtLH(XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f), XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f), XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+
+	// 2. 배경 비트맵 렌더링 (Z-버퍼 끄기)
+	// 배경은 깊이와 상관없이 가장 먼저 그려져야 합니다.
 	m_D3D->TurnZBufferOff();
 	{
-		XMMATRIX uiViewMatrix = XMMatrixLookAtLH(XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f), XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f), XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-
-		// 비트맵 렌더링
+		// 비트맵의 버텍스/인덱스 버퍼를 활성화하고 위치를 설정합니다.
 		m_Bitmap->Render(m_D3D->GetDeviceContext(), 0, 0);
-		
+		// 텍스처 셰이더를 사용해 비트맵을 실제로 그립니다.
+		m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Bitmap->GetIndexCount(), worldMatrix, uiViewMatrix, orthoMatrix, m_Bitmap->GetTexture());
 	}
-	m_D3D->TurnZBufferOn();
+	m_D3D->TurnZBufferOn(); // 3D 씬을 그리기 위해 Z-버퍼를 다시 켭니다.
 	
-	//2 모델 렌더링
+	// 3. 모델 렌더링
 	for (const auto& instance : m_SceneInstances)
 	{
 		ModelClass* model = m_Models[instance.modelIndex].get();
@@ -197,24 +214,17 @@ bool GraphicsClass::Render(CameraClass* gameCamera)
 			instance.worldTransform, viewMatrix, projectionMatrix, model->GetTexture(), m_Lights);
 	}
 
-	// 3. 2D UI 렌더링 (Z-버퍼 끄기)
+	// 4. 2D UI 렌더링 (Z-버퍼 끄기)
 	m_D3D->TurnZBufferOff();
 	{
-		// 2D UI를 위한 뷰 행렬은 단위 행렬(Identity) 또는 고정된 카메라 뷰를 사용합니다.
-		// 여기서는 TextClass 초기화에 사용했던 baseViewMatrix를 다시 만듭니다.
-		XMMATRIX uiViewMatrix = XMMatrixLookAtLH(XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f), XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f), XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-
-		// 비트맵 렌더링
-		m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Bitmap->GetIndexCount(), worldMatrix, uiViewMatrix, orthoMatrix, m_Bitmap->GetTexture());
-
 		// 텍스트 렌더링
 		m_D3D->TurnOnAlphaBlending();
-		m_Text->Render(m_D3D->GetDeviceContext(), worldMatrix, orthoMatrix); // TextClass는 내부적으로 뷰 행렬을 관리하므로 전달 안 함
+		m_Text->Render(m_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);
 		m_D3D->TurnOffAlphaBlending();
 	}
 	m_D3D->TurnZBufferOn();
 
-	// Present the rendered scene to the screen.
+	// 5. 프레임 종료
 	m_D3D->EndScene();
 
 	return true;

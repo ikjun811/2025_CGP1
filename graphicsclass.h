@@ -32,9 +32,12 @@ const float SCREEN_NEAR = 0.1f;
 
 struct SceneObjectInstance
 {
-	int modelIndex;               // m_Models 벡터에 있는 모델의 인덱스
-	XMMATRIX worldTransform;      // 객체의 월드 변환 행렬
-	bool isAnimated = false; //움직이는지
+	int modelIndex;
+	XMMATRIX worldTransform;
+	bool isAnimated = false;
+
+	// 애니메이션을 위한 추가 데이터 (선택적이지만 좋은 방법)
+	XMVECTOR initialPosition; // 객체의 초기 위치
 };
 
 
