@@ -88,6 +88,11 @@ private:
 
 	// 광원 객체들을 벡터로 관리합니다.
 	std::vector<LightClass*> m_Lights;
+
+	float m_LighthouseRotationAngle; // 현재 회전 각도 (라디안)
+	float m_LighthouseRotationSpeed; // 회전 속도 (라디안/초)
+
+
 };
 
 #endif

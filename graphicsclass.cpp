@@ -16,6 +16,9 @@ GraphicsClass::GraphicsClass()
 	m_BoatZOffset = 0.0f;
 	m_BoatSpeed = 0.05f;
 	m_BoatMovingForward = true;
+
+	m_LighthouseRotationAngle = 0.0f;
+	m_LighthouseRotationSpeed = 2.0f;
 }
 
 
@@ -127,8 +130,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_SceneInstances.push_back({ 1, XMMatrixScaling(1.5f, 1.5f, 1.5f) * XMMatrixTranslation(10.0f, -4.0f, 600.0f) });
 
 	// 가로등
-	m_SceneInstances.push_back({ 4, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(-10.0f, -1.0f, 24.0f) }); // index 4: streetlight
-	m_SceneInstances.push_back({ 4, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(15.0f, -1.5f, 27.0f) });
+	m_SceneInstances.push_back({ 4, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(-10.0f, -2.3f, 24.0f) }); // index 4: streetlight
+	m_SceneInstances.push_back({ 4, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(15.0f, -2.3f, 27.0f) });
 
 
 	// --- 캐릭터와 보트의 자연스러운 배치 ---
@@ -143,8 +146,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		}); // index 6: char (스케일은 작게 유지)
 
 	// [움직이는 보트] 섬들 사이를 항해하는 모습.
-	XMVECTOR boatInitialPos = { -10.0f, -3.0f, 45.0f };
-	m_SceneInstances.push_back({ 3, XMMatrixScaling(0.8f, 0.8f, 0.8f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslationFromVector(boatInitialPos), true, boatInitialPos }); // index 3: boat
+	XMVECTOR boatInitialPos = { -10.0f, -5.0f, 75.0f };
+	m_SceneInstances.push_back({ 3, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslationFromVector(boatInitialPos), true, boatInitialPos }); // index 3: boat
 
 	// [정박한 보트] 중앙 섬(섬 1) 근처에 정박한 모습.
 	m_SceneInstances.push_back({ 3, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixRotationY(XMConvertToRadians(100.0f)) * XMMatrixTranslation(40.0f, -5.0f, 80.0f) });
@@ -154,18 +157,47 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 
 	// --- 광원 객체 초기화 ---
+	m_Lights.clear(); // 기존 광원 삭제
 	m_Lights.resize(4);
-	m_Lights[0] = new LightClass; 
-	m_Lights[0]->SetDiffuseColor(10.0f, 0.0f, 0.0f, 1.0f); m_Lights[0]->SetPosition(-10.0f, 3.0f, 10.0f);
-	
-	m_Lights[1] = new LightClass; 
-	m_Lights[1]->SetDiffuseColor(0.0f, 10.0f, 0.0f, 1.0f); m_Lights[1]->SetPosition(0.0f, 3.0f, 10.0f);
-	
-	m_Lights[2] = new LightClass; 
-	m_Lights[2]->SetDiffuseColor(0.0f, 0.0f, 10.0f, 1.0f); m_Lights[2]->SetPosition(10.0f, 3.0f, 10.0f);
-	
-	m_Lights[3] = new LightClass; 
-	m_Lights[3]->SetDiffuseColor(10.0f, 10.0f, 10.0f, 1.0f); m_Lights[3]->SetPosition(20.0f, 3.0f, 10.0f);
+
+	// 1. 전역 방향성 조명 (달빛처럼 약간 위에서 비스듬히)
+	m_Lights[0] = new LightClass();
+	m_Lights[0]->SetLightType(LightType::Directional);
+	m_Lights[0]->SetDirection(0.5f, -0.7f, 0.5f); // 비스듬한 방향
+	m_Lights[0]->SetDiffuseColor(0.8f, 0.8f, 1.0f, 1.0f); // 약한 푸른빛
+	m_Lights[0]->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Lights[0]->SetSpecularPower(64.0f);
+
+	// 2. 등대 1의 스포트라이트
+	m_Lights[1] = new LightClass();
+	m_Lights[1]->SetLightType(LightType::Spot);
+	m_Lights[1]->SetPosition(40.0f, 64.0f, 480.0f); // 등대 모델 위쪽
+	m_Lights[1]->SetDirection(0.0f, -0.3f, 1.0f); // 약간 아래 앞쪽을 향함
+	m_Lights[1]->SetDiffuseColor(50.0f, 50.0f, 20.0f, 1.0f); // 강한 노란빛
+	m_Lights[1]->SetSpecularColor(50.0f, 50.0f, 50.0f, 1.0f);
+	m_Lights[1]->SetSpecularPower(256.0f);
+	m_Lights[1]->SetSpotlightAngle(15.0f, 25.0f);
+
+	// 3. 가로등 1의 스포트라이트
+	m_Lights[2] = new LightClass();
+	m_Lights[2]->SetLightType(LightType::Spot);
+	m_Lights[2]->SetPosition(-10.0f, 5.0f, 24.0f);
+	m_Lights[2]->SetDirection(0.0f, -1.0f, 0.0f); // 바로 아래를 비춤
+	m_Lights[2]->SetDiffuseColor(80.0f, 60.0f, 20.0f, 1.0f);
+	m_Lights[2]->SetSpecularColor(8.0f, 6.0f, 2.0f, 1.0f);
+	m_Lights[2]->SetSpecularPower(128.0f);
+	m_Lights[2]->SetSpotlightAngle(40.0f, 60.0f);
+
+	// 4. 가로등 2의 스포트라이트
+	m_Lights[3] = new LightClass();
+	m_Lights[3]->SetLightType(LightType::Spot);
+	m_Lights[3]->SetPosition(15.0f, 5.0f, 27.0f);
+	m_Lights[3]->SetDirection(0.0f, -1.0f, 0.0f);
+	m_Lights[3]->SetDiffuseColor(8.0f, 6.0f, 2.0f, 1.0f);
+	m_Lights[3]->SetSpecularColor(8.0f, 6.0f, 2.0f, 1.0f);
+	m_Lights[3]->SetSpecularPower(128.0f);
+	m_Lights[3]->SetSpotlightAngle(40.0f, 60.0f);
+
 
 	// --- UI 객체 초기화 ---
 	m_Bitmap = new BitmapClass;
@@ -238,6 +270,22 @@ bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, float delta
 		model->UpdateAnimation(deltaTime);
 	}
 
+	//등대 조명 회전
+	m_LighthouseRotationAngle += m_LighthouseRotationSpeed * deltaTime;
+	if (m_LighthouseRotationAngle > XM_2PI)
+	{
+		m_LighthouseRotationAngle -= XM_2PI;
+	}
+
+	float newDirX = sinf(m_LighthouseRotationAngle);
+	float newDirZ = cosf(m_LighthouseRotationAngle);
+
+	if (m_Lights.size() > 1 && m_Lights[1] != nullptr)
+	{
+		// SetDirection을 호출하여 조명의 방향을 실시간으로 변경
+		m_Lights[1]->SetDirection(newDirX, -0.3f, newDirZ);
+	}
+
 	if (!m_Text->SetFPS(fps, m_D3D->GetDeviceContext())) return false;
 	if (!m_Text->SetCPU(cpu, m_D3D->GetDeviceContext())) return false;
 
@@ -282,21 +330,24 @@ bool GraphicsClass::Render(CameraClass* gameCamera)
 	
 		if (instance.modelIndex == 6) // 캐릭터 모델인 경우
 		{
-			XMMATRIX finalWorldMatrix = instance.worldTransform;
+			// XMMATRIX finalWorldMatrix = instance.worldTransform; // 이 줄은 중복이므로 제거 가능
 
 			m_LightShader->Render(m_D3D->GetDeviceContext(), model->GetIndexCount(),
-				finalWorldMatrix, // 수정된 월드 행렬 전달
+				finalWorldMatrix,
 				viewMatrix,
 				projectionMatrix,
 				model->GetTexture(),
 				m_Lights,
-				model->GetFinalBoneTransforms());
+				model->GetFinalBoneTransforms(),
+				gameCamera);
 		}
 		else // 그 외 모든 정적 모델
 		{
 			m_StaticShader->Render(m_D3D->GetDeviceContext(), model->GetIndexCount(),
 				finalWorldMatrix, viewMatrix, projectionMatrix,
-				model->GetTexture(), m_Lights);
+				model->GetTexture(),
+				m_Lights,
+				gameCamera);
 		}
 	}
 

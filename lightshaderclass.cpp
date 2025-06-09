@@ -7,15 +7,15 @@
 
 LightShaderClass::LightShaderClass()
 {
-	m_vertexShader = 0;
-	m_pixelShader = 0;
-	m_layout = 0;
-	m_sampleState = 0;
-	m_matrixBuffer = 0;
-	//m_lightColorBuffer = 0;
-	//m_lightPositionBuffer = 0;
+	m_vertexShader = nullptr;
+	m_pixelShader = nullptr;
+	m_layout = nullptr;
+	m_sampleState = nullptr;
+	m_matrixBuffer = nullptr;
+	m_boneBuffer = nullptr;
+	m_cameraBuffer = nullptr;
+	m_lightBuffer = nullptr;
 }
-
 
 LightShaderClass::LightShaderClass(const LightShaderClass& other)
 {
@@ -29,8 +29,10 @@ LightShaderClass::~LightShaderClass()
 // The new HLSL shader files are used as input to initialize the light shader.
 bool LightShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
+	// 퐁 조명 셰이더 파일로 변경 (애니메이션 지원 버전)
 	return InitializeShader(device, hwnd, L"./data/pointLightShader.hlsl");
 }
+
 
 
 void LightShaderClass::Shutdown()
@@ -43,13 +45,14 @@ void LightShaderClass::Shutdown()
 
 bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount,
 	XMMATRIX world, XMMATRIX view, XMMATRIX projection,
-	ID3D11ShaderResourceView* texture, const std::vector<LightClass*>& lights,
-	const std::vector<XMMATRIX>& boneTransforms)
+	ID3D11ShaderResourceView* texture, const vector<LightClass*>& lights,
+	const vector<XMMATRIX>& boneTransforms, CameraClass* camera)
 {
-	if (!SetShaderParameters(deviceContext, world, view, projection, texture, lights, boneTransforms))
+	if (!SetShaderParameters(deviceContext, world, view, projection, texture, lights, boneTransforms, camera))
 	{
 		return false;
 	}
+
 	RenderShader(deviceContext, indexCount);
 	return true;
 }
@@ -70,9 +73,8 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, const W
 
 
 	// Initialize the pointers this function will use to null.
-	errorMessage = 0;
-	vertexShaderBuffer = 0;
-	pixelShaderBuffer = 0;
+
+
 
     // Compile the vertex shader code.
 	result = D3DCompileFromFile(fileName, NULL, NULL, "LightVertexShader", "vs_5_0", 
@@ -229,7 +231,12 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, const W
 	result = device->CreateBuffer(&bufferDesc, NULL, &m_boneBuffer);
 	if (FAILED(result)) return false;
 
-	// Light Buffer (b2)
+	// Camera Buffer (b2)
+	bufferDesc.ByteWidth = sizeof(CameraBufferType);
+	result = device->CreateBuffer(&bufferDesc, NULL, &m_cameraBuffer);
+	if (FAILED(result)) return false;
+
+	// Light Buffer (b3)
 	bufferDesc.ByteWidth = sizeof(LightBufferType);
 	result = device->CreateBuffer(&bufferDesc, NULL, &m_lightBuffer);
 	if (FAILED(result)) return false;
@@ -240,52 +247,14 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, const W
 
 void LightShaderClass::ShutdownShader()
 {
-	if (m_lightBuffer) 
-	{ 
-		m_lightBuffer->Release(); 
-		m_lightBuffer = nullptr; 
-	}
-
-	if (m_boneBuffer)
-	{
-		m_boneBuffer->Release();
-		m_boneBuffer = nullptr;
-	}
-
-
-	if (m_matrixBuffer) 
-	{ 
-		m_matrixBuffer->Release();
-		m_matrixBuffer = nullptr; 
-	}
-
-	// Release the sampler state.
-	if(m_sampleState)
-	{
-		m_sampleState->Release();
-		m_sampleState = 0;
-	}
-
-	// Release the layout.
-	if(m_layout)
-	{
-		m_layout->Release();
-		m_layout = 0;
-	}
-
-	// Release the pixel shader.
-	if(m_pixelShader)
-	{
-		m_pixelShader->Release();
-		m_pixelShader = 0;
-	}
-
-	// Release the vertex shader.
-	if(m_vertexShader)
-	{
-		m_vertexShader->Release();
-		m_vertexShader = 0;
-	}
+	if (m_lightBuffer) { m_lightBuffer->Release(); m_lightBuffer = nullptr; }
+	if (m_cameraBuffer) { m_cameraBuffer->Release(); m_cameraBuffer = nullptr; }
+	if (m_boneBuffer) { m_boneBuffer->Release(); m_boneBuffer = nullptr; }
+	if (m_matrixBuffer) { m_matrixBuffer->Release(); m_matrixBuffer = nullptr; }
+	if (m_sampleState) { m_sampleState->Release(); m_sampleState = nullptr; }
+	if (m_layout) { m_layout->Release(); m_layout = nullptr; }
+	if (m_pixelShader) { m_pixelShader->Release(); m_pixelShader = nullptr; }
+	if (m_vertexShader) { m_vertexShader->Release(); m_vertexShader = nullptr; }
 
 	return;
 }
@@ -326,27 +295,27 @@ void LightShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 	return;
 }
 
-// The SetShaderParameters function now takes in lightDirection and diffuseColor as inputs.
 bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	XMMATRIX world, XMMATRIX view, XMMATRIX projection,
-	ID3D11ShaderResourceView* texture, const std::vector<LightClass*>& lights,
-	const std::vector<XMMATRIX>& boneTransforms) 
+	ID3D11ShaderResourceView* texture,
+	const vector<LightClass*>& lights,
+	const vector<XMMATRIX>& boneTransforms,
+	CameraClass* camera)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
-	// --- Matrix Buffer 업데이트 (b0) ---
+	// --- Matrix Buffer 업데이트 (VS의 b0) ---
 	result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result)) return false;
-	MatrixBufferType* dataPtr = (MatrixBufferType*)mappedResource.pData;
-	dataPtr->world = XMMatrixTranspose(world);
-	dataPtr->view = XMMatrixTranspose(view);
-	dataPtr->projection = XMMatrixTranspose(projection);
+	MatrixBufferType* dataPtrMat = (MatrixBufferType*)mappedResource.pData;
+	dataPtrMat->world = XMMatrixTranspose(world);
+	dataPtrMat->view = XMMatrixTranspose(view);
+	dataPtrMat->projection = XMMatrixTranspose(projection);
 	deviceContext->Unmap(m_matrixBuffer, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, &m_matrixBuffer);
 
-
-	// --- Bone Buffer 업데이트 (b1) ---
+	// --- Bone Buffer 업데이트 (VS의 b1) ---
 	result = deviceContext->Map(m_boneBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result)) return false;
 	BoneBufferType* dataPtrBones = (BoneBufferType*)mappedResource.pData;
@@ -360,48 +329,61 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	deviceContext->Unmap(m_boneBuffer, 0);
 	deviceContext->VSSetConstantBuffers(1, 1, &m_boneBuffer);
 
-	// --- Light Buffer 업데이트 (b2) ---
+	// --- Camera Buffer 업데이트 (VS/PS의 b2) ---
+	result = deviceContext->Map(m_cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result)) return false;
+	CameraBufferType* dataPtrCam = (CameraBufferType*)mappedResource.pData;
+	dataPtrCam->cameraPosition = camera->GetPosition();
+	dataPtrCam->padding = 0.0f;
+	deviceContext->Unmap(m_cameraBuffer, 0);
+	deviceContext->VSSetConstantBuffers(2, 1, &m_cameraBuffer);
+	deviceContext->PSSetConstantBuffers(2, 1, &m_cameraBuffer);
+
+	// --- Light Buffer 업데이트 (PS의 b3) ---
 	result = deviceContext->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result)) return false;
-	LightBufferType* dataPtr2 = (LightBufferType*)mappedResource.pData;
-	// C++의 LightClass 객체 배열에서 정보를 복사합니다.
-	for (size_t i = 0; i < NUM_LIGHTS; ++i)
+	LightBufferType* dataPtrLight = (LightBufferType*)mappedResource.pData;
+	dataPtrLight->ambientColor = XMFLOAT4(0.1f, 0.1f, 0.15f, 1.0f);
+
+	int spotLightCount = 0;
+	bool directionalFound = false;
+	for (const auto& light : lights)
 	{
-		if (i < lights.size() && lights[i] != nullptr)
+		if (light->GetLightType() == LightType::Directional && !directionalFound)
 		{
-			dataPtr2->lights[i].diffuseColor = lights[i]->GetDiffuseColor();
-			dataPtr2->lights[i].lightPosition = lights[i]->GetPosition();
+			dataPtrLight->directionalLight.direction = light->GetDirection();
+			dataPtrLight->directionalLight.diffuseColor = light->GetDiffuseColor();
+			dataPtrLight->directionalLight.specularColor = light->GetSpecularColor();
+			dataPtrLight->directionalLight.specularPower = light->GetSpecularPower();
+			directionalFound = true;
 		}
-		else // 데이터가 부족하면 빈 값으로 채웁니다.
+		else if (light->GetLightType() == LightType::Spot && spotLightCount < NUM_SPOT_LIGHTS_ANIM)
 		{
-			dataPtr2->lights[i].diffuseColor = XMFLOAT4(0, 0, 0, 0);
-			dataPtr2->lights[i].lightPosition = XMFLOAT4(0, 0, 0, 0);
+			dataPtrLight->spotLights[spotLightCount].position = light->GetPosition();
+			dataPtrLight->spotLights[spotLightCount].direction = light->GetDirection();
+			dataPtrLight->spotLights[spotLightCount].diffuseColor = light->GetDiffuseColor();
+			dataPtrLight->spotLights[spotLightCount].specularColor = light->GetSpecularColor();
+			dataPtrLight->spotLights[spotLightCount].specularPower = light->GetSpecularPower();
+			dataPtrLight->spotLights[spotLightCount].innerConeCos = light->GetInnerConeAngle();
+			dataPtrLight->spotLights[spotLightCount].outerConeCos = light->GetOuterConeAngle();
+			dataPtrLight->spotLights[spotLightCount].spotAngle = dataPtrLight->spotLights[spotLightCount].innerConeCos - dataPtrLight->spotLights[spotLightCount].outerConeCos;
+			spotLightCount++;
 		}
 	}
 	deviceContext->Unmap(m_lightBuffer, 0);
-	deviceContext->PSSetConstantBuffers(2, 1, &m_lightBuffer); // Pixel Shader의 1번 슬롯에 바인딩
+	deviceContext->PSSetConstantBuffers(3, 1, &m_lightBuffer);
 
-	// --- 텍스처 리소스 설정 (t0) ---
+	// --- 텍스처 리소스 설정 ---
 	deviceContext->PSSetShaderResources(0, 1, &texture);
 
 	return true;
 }
 
-
 void LightShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
 {
-	// Set the vertex input layout.
 	deviceContext->IASetInputLayout(m_layout);
-
-    // Set the vertex and pixel shaders that will be used to render this triangle.
-    deviceContext->VSSetShader(m_vertexShader, NULL, 0);
-    deviceContext->PSSetShader(m_pixelShader, NULL, 0);
-
-	// Set the sampler state in the pixel shader.
+	deviceContext->VSSetShader(m_vertexShader, NULL, 0);
+	deviceContext->PSSetShader(m_pixelShader, NULL, 0);
 	deviceContext->PSSetSamplers(0, 1, &m_sampleState);
-
-	// Render the triangle.
 	deviceContext->DrawIndexed(indexCount, 0, 0);
-
-	return;
 }

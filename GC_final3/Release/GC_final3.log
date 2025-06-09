@@ -3,11 +3,11 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.3412
   (소스 파일 'graphicsclass.cpp'을(를) 컴파일하는 중)
       C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\memory(3597,35):
       템플릿 인스턴스화 컨텍스트(가장 오래된 인스턴스화 컨텍스트)가
-          C:\Users\0320\Documents\GitHub\2025_CGP1\graphicsclass.cpp(54,21):
+          C:\Users\0320\Documents\GitHub\2025_CGP1\graphicsclass.cpp(57,21):
           컴파일되는 함수 템플릿 인스턴스화 'std::unique_ptr<ModelClass,std::default_delete<ModelClass>> std::make_unique<ModelClass,,0>(void)'에 대한 참조를 확인하세요.
   
   코드를 생성하고 있습니다.
-  1 of 1073 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+  1 of 1088 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     1 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.

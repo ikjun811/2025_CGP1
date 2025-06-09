@@ -1,8 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: staticshaderclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
-#include "staticshaderclass.h" // 헤더 파일 이름 변경
-
+#include "staticshaderclass.h"
 
 StaticShaderClass::StaticShaderClass()
 {
@@ -11,6 +10,7 @@ StaticShaderClass::StaticShaderClass()
 	m_layout = nullptr;
 	m_sampleState = nullptr;
 	m_matrixBuffer = nullptr;
+	m_cameraBuffer = nullptr;
 	m_lightBuffer = nullptr;
 }
 
@@ -19,7 +19,6 @@ StaticShaderClass::~StaticShaderClass() { }
 
 bool StaticShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
-
 	return InitializeShader(device, hwnd, L"./data/staticLight.hlsl");
 }
 
@@ -28,18 +27,20 @@ void StaticShaderClass::Shutdown()
 	ShutdownShader();
 }
 
-
 bool StaticShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount,
 	XMMATRIX world, XMMATRIX view, XMMATRIX projection,
-	ID3D11ShaderResourceView* texture, const std::vector<LightClass*>& lights)
+	ID3D11ShaderResourceView* texture,
+	const vector<LightClass*>& lights, CameraClass* camera)
 {
-	if (!SetShaderParameters(deviceContext, world, view, projection, texture, lights))
+	if (!SetShaderParameters(deviceContext, world, view, projection, texture, lights, camera))
 	{
 		return false;
 	}
+
 	RenderShader(deviceContext, indexCount);
 	return true;
 }
+
 
 
 bool StaticShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, const WCHAR* fileName)
@@ -172,12 +173,6 @@ bool StaticShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, const 
     matrixBufferDesc.MiscFlags = 0;
 	matrixBufferDesc.StructureByteStride = 0;
 
-	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
-	result = device->CreateBuffer(&matrixBufferDesc, NULL, &m_matrixBuffer);
-	if(FAILED(result))
-	{
-		return false;
-	}
 
 	// --- 상수 버퍼 생성 ---
 	D3D11_BUFFER_DESC bufferDesc;
@@ -192,7 +187,12 @@ bool StaticShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, const 
 	result = device->CreateBuffer(&bufferDesc, NULL, &m_matrixBuffer);
 	if (FAILED(result)) return false;
 
-	// Light Buffer (b1)
+	// Camera Buffer (b1)
+	bufferDesc.ByteWidth = sizeof(CameraBufferType);
+	result = device->CreateBuffer(&bufferDesc, NULL, &m_cameraBuffer);
+	if (FAILED(result)) return false;
+
+	// Light Buffer (b2)
 	bufferDesc.ByteWidth = sizeof(LightBufferType);
 	result = device->CreateBuffer(&bufferDesc, NULL, &m_lightBuffer);
 	if (FAILED(result)) return false;
@@ -204,6 +204,7 @@ bool StaticShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, const 
 void StaticShaderClass::ShutdownShader()
 {
 	if (m_lightBuffer) { m_lightBuffer->Release(); m_lightBuffer = nullptr; }
+	if (m_cameraBuffer) { m_cameraBuffer->Release(); m_cameraBuffer = nullptr; }
 	if (m_matrixBuffer) { m_matrixBuffer->Release(); m_matrixBuffer = nullptr; }
 	if (m_sampleState) { m_sampleState->Release(); m_sampleState = nullptr; }
 	if (m_layout) { m_layout->Release(); m_layout = nullptr; }
@@ -252,55 +253,77 @@ void StaticShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND 
 // The SetShaderParameters function now takes in lightDirection and diffuseColor as inputs.
 bool StaticShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	XMMATRIX world, XMMATRIX view, XMMATRIX projection,
-	ID3D11ShaderResourceView* texture, const std::vector<LightClass*>& lights) 
+	ID3D11ShaderResourceView* texture,
+	const vector<LightClass*>& lights, CameraClass* camera) 
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
-	// --- Matrix Buffer 업데이트 (b0) ---
-	world = XMMatrixTranspose(world);
-	view = XMMatrixTranspose(view);
-	projection = XMMatrixTranspose(projection);
+	// --- Matrix Buffer 업데이트 (VS의 b0) ---
 	result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result)) return false;
-	MatrixBufferType* dataPtr = (MatrixBufferType*)mappedResource.pData;
-	dataPtr->world = world;
-	dataPtr->view = view;
-	dataPtr->projection = projection;
+	MatrixBufferType* dataPtrMat = (MatrixBufferType*)mappedResource.pData;
+	dataPtrMat->world = XMMatrixTranspose(world);
+	dataPtrMat->view = XMMatrixTranspose(view);
+	dataPtrMat->projection = XMMatrixTranspose(projection);
 	deviceContext->Unmap(m_matrixBuffer, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, &m_matrixBuffer);
 
 
-	// --- Bone Buffer 업데이트 (b1) ---
+
+	// --- Camera Buffer 업데이트 (VS/PS의 b1) ---
+	result = deviceContext->Map(m_cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result)) return false;
+	CameraBufferType* dataPtrCam = (CameraBufferType*)mappedResource.pData;
+	dataPtrCam->cameraPosition = camera->GetPosition();
+	dataPtrCam->padding = 0.0f;
+	deviceContext->Unmap(m_cameraBuffer, 0);
+	deviceContext->VSSetConstantBuffers(1, 1, &m_cameraBuffer);
+	deviceContext->PSSetConstantBuffers(1, 1, &m_cameraBuffer);
+
+	// --- Light Buffer 업데이트 (PS의 b2) ---
 	result = deviceContext->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result)) return false;
-	LightBufferType* dataPtr2 = (LightBufferType*)mappedResource.pData;
-	for (size_t i = 0; i < NUM_LIGHTS_STATIC; ++i)
+	LightBufferType* dataPtrLight = (LightBufferType*)mappedResource.pData;
+	dataPtrLight->ambientColor = XMFLOAT4(0.1f, 0.1f, 0.15f, 1.0f);
+
+	int spotLightCount = 0;
+	bool directionalFound = false;
+	for (const auto& light : lights)
 	{
-		if (i < lights.size() && lights[i] != nullptr)
+		if (light->GetLightType() == LightType::Directional && !directionalFound)
 		{
-			dataPtr2->lights[i].diffuseColor = lights[i]->GetDiffuseColor();
-			dataPtr2->lights[i].lightPosition = lights[i]->GetPosition();
+			dataPtrLight->directionalLight.direction = light->GetDirection();
+			dataPtrLight->directionalLight.diffuseColor = light->GetDiffuseColor();
+			dataPtrLight->directionalLight.specularColor = light->GetSpecularColor();
+			dataPtrLight->directionalLight.specularPower = light->GetSpecularPower();
+			directionalFound = true;
 		}
-		else
+		else if (light->GetLightType() == LightType::Spot && spotLightCount < NUM_SPOT_LIGHTS_STATIC)
 		{
-			dataPtr2->lights[i].diffuseColor = XMFLOAT4(0, 0, 0, 0);
-			dataPtr2->lights[i].lightPosition = XMFLOAT4(0, 0, 0, 0);
+			dataPtrLight->spotLights[spotLightCount].position = light->GetPosition();
+			dataPtrLight->spotLights[spotLightCount].direction = light->GetDirection();
+			dataPtrLight->spotLights[spotLightCount].diffuseColor = light->GetDiffuseColor();
+			dataPtrLight->spotLights[spotLightCount].specularColor = light->GetSpecularColor();
+			dataPtrLight->spotLights[spotLightCount].specularPower = light->GetSpecularPower();
+			dataPtrLight->spotLights[spotLightCount].innerConeCos = light->GetInnerConeAngle();
+			dataPtrLight->spotLights[spotLightCount].outerConeCos = light->GetOuterConeAngle();
+			dataPtrLight->spotLights[spotLightCount].spotAngle = dataPtrLight->spotLights[spotLightCount].innerConeCos - dataPtrLight->spotLights[spotLightCount].outerConeCos;
+			spotLightCount++;
 		}
 	}
 	deviceContext->Unmap(m_lightBuffer, 0);
-	deviceContext->PSSetConstantBuffers(1, 1, &m_lightBuffer);
+	deviceContext->PSSetConstantBuffers(2, 1, &m_lightBuffer);
 
-
-	// --- 텍스처 리소스 설정 (t0) ---
+	// --- 텍스처 리소스 설정 ---
 	deviceContext->PSSetShaderResources(0, 1, &texture);
+
 	return true;
 }
 
 
 void StaticShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
 {
-	// LightShaderClass의 구현과 동일
 	deviceContext->IASetInputLayout(m_layout);
 	deviceContext->VSSetShader(m_vertexShader, NULL, 0);
 	deviceContext->PSSetShader(m_pixelShader, NULL, 0);
