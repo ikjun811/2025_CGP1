@@ -9,6 +9,7 @@ GraphicsClass::GraphicsClass()
 	m_D3D = nullptr;
 	m_TextureShader = nullptr;
 	m_LightShader = nullptr;
+	m_StaticShader = nullptr;
 	m_Bitmap = nullptr;
 	m_Text = nullptr;
 
@@ -46,8 +47,12 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_LightShader = new LightShaderClass;
 	if (!m_LightShader || !m_LightShader->Initialize(m_D3D->GetDevice(), hwnd)) return false;
 
-	auto loadModel = [&](const wchar_t* modelFile, const wchar_t* textureFile) -> bool {
+	m_StaticShader = new StaticShaderClass;
+	if (!m_StaticShader || !m_StaticShader->Initialize(m_D3D->GetDevice(), hwnd)) return false;
+
+	auto loadModel = [&](const wchar_t* modelFile, const wchar_t* textureFile = nullptr) -> bool {
 		auto model = std::make_unique<ModelClass>();
+		// Initialize 함수는 이미 textureFilename이 nullptr일 경우를 처리하도록 수정되었으므로 완벽하게 호환됩니다.
 		if (!model->Initialize(m_D3D->GetDevice(), modelFile, textureFile)) {
 			return false;
 		}
@@ -61,7 +66,20 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	if (!loadModel(L"./data/Boat.obj", L"./data/Boat.dds")) return false;           // index 3: boat
 	if (!loadModel(L"./data/streetlight.obj", L"./data/streetlight.dds")) return false; // index 4: streetlight
 	if (!loadModel(L"./data/Rock.obj", L"./data/Rock.dds")) return false;           // index 5: rock
-	if (!loadModel(L"./data/character.fbx", L"./data/character_d.dds")) return false; // index 6: character
+	if (!loadModel(L"./data/male.fbx", L"./data/peopleColors.dds")) return false; // index 6 char
+	//if (!loadModel(L"./data/character.fbx")) return false;
+
+	/*	m_Models[6]->LoadAnimation(L"./data/male_idle1_200f.fbx", "idle");
+	m_Models[6]->LoadAnimation(L"./data/male_running_20f.fbx", "running");
+	m_Models[6]->SetAnimationClip("idle"); */
+
+	m_Models[6]->LoadAnimation(L"./data/idle.fbx", "idle");
+	m_Models[6]->LoadAnimation(L"./data/running.fbx", "running");
+	m_Models[6]->LoadAnimation(L"./data/attack.fbx", "attack");
+	m_Models[6]->LoadAnimation(L"./data/die.fbx", "die");
+	m_Models[6]->SetAnimationClip("running");
+
+
 
 	// --- 2. 씬에 객체 인스턴스 배치 ---
 	// 로드된 모델(인덱스)을 사용하여 씬에 여러 개의 인스턴스를 배치합니다.
@@ -94,7 +112,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_SceneInstances.push_back({ 5, XMMatrixScaling(0.2f, 0.3f, 0.2f) * XMMatrixTranslation(-20.0f, 0.0f, 80.0f) });
 
 	// Character (1개)
-	m_SceneInstances.push_back({ 6, XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixTranslation(0.0f, -1.5f, 10.0f) });
+	XMVECTOR charInitialPos = { 0.0f, -1.5f, 10.0f };
+	m_SceneInstances.push_back({
+		6,
+		XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixTranslationFromVector(charInitialPos),
+		false, // 보트처럼 움직이지 않음
+		charInitialPos
+		});
+
 
 	// --- 광원 객체 초기화 ---
 	m_Lights.resize(4);
@@ -132,6 +157,7 @@ void GraphicsClass::Shutdown()
 	m_Lights.clear();
 	if (m_Text) { m_Text->Shutdown(); delete m_Text; m_Text = nullptr; }
 	if (m_Bitmap) { m_Bitmap->Shutdown(); delete m_Bitmap; m_Bitmap = nullptr; }
+	if (m_StaticShader) { m_StaticShader->Shutdown(); delete m_StaticShader; m_StaticShader = nullptr; }
 	if (m_LightShader) { m_LightShader->Shutdown(); delete m_LightShader; m_LightShader = nullptr; }
 	if (m_TextureShader) { m_TextureShader->Shutdown(); delete m_TextureShader; m_TextureShader = nullptr; }
 	m_Models.clear(); // unique_ptr가 모든 ModelClass 메모리 자동 해제
@@ -141,7 +167,7 @@ void GraphicsClass::Shutdown()
 
 
 
-bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera)
+bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, float deltaTime)
 {
 	// 보트 직선 운동 업데이트
 	float moveRange = 5.0f;
@@ -172,6 +198,12 @@ bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera)
 			// 3. 최종 월드 행렬을 조합합니다.
 			instance.worldTransform = scaleMatrix * translationMatrix;
 		}
+	}
+
+	//float deltaTime = 1.0f / 60.0f; 
+	for (auto& model : m_Models)
+	{
+		model->UpdateAnimation(deltaTime);
 	}
 
 	if (!m_Text->SetFPS(fps, m_D3D->GetDeviceContext())) return false;
@@ -210,8 +242,30 @@ bool GraphicsClass::Render(CameraClass* gameCamera)
 	{
 		ModelClass* model = m_Models[instance.modelIndex].get();
 		model->Render(m_D3D->GetDeviceContext());
-		m_LightShader->Render(m_D3D->GetDeviceContext(), model->GetIndexCount(),
-			instance.worldTransform, viewMatrix, projectionMatrix, model->GetTexture(), m_Lights);
+
+		XMMATRIX finalWorldMatrix = instance.worldTransform;
+
+
+
+	
+		if (instance.modelIndex == 6) // 캐릭터 모델인 경우
+		{
+			XMMATRIX finalWorldMatrix = instance.worldTransform;
+
+			m_LightShader->Render(m_D3D->GetDeviceContext(), model->GetIndexCount(),
+				finalWorldMatrix, // 수정된 월드 행렬 전달
+				viewMatrix,
+				projectionMatrix,
+				model->GetTexture(),
+				m_Lights,
+				model->GetFinalBoneTransforms());
+		}
+		else // 그 외 모든 정적 모델
+		{
+			m_StaticShader->Render(m_D3D->GetDeviceContext(), model->GetIndexCount(),
+				finalWorldMatrix, viewMatrix, projectionMatrix,
+				model->GetTexture(), m_Lights);
+		}
 	}
 
 	// 4. 2D UI 렌더링 (Z-버퍼 끄기)

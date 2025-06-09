@@ -12,6 +12,7 @@
 #include "cameraclass.h"
 #include "modelclass.h"
 #include "lightshaderclass.h"
+#include "staticshaderclass.h"
 #include "lightclass.h"
 #include "textureshaderclass.h"
 #include "bitmapclass.h"
@@ -53,7 +54,7 @@ public:
 
 	bool Initialize(int screenWidth, int screenHeight, HWND hwnd);
 	void Shutdown();
-	bool Frame(int fps, int cpu, CameraClass* gameCamera);
+	bool Frame(int fps, int cpu, CameraClass* gameCamera, float deltaTime);
 
 
 private:
@@ -78,7 +79,8 @@ private:
 
 	// ¼ÎÀÌ´õ °´Ã¼µé
 	TextureShaderClass* m_TextureShader;
-	LightShaderClass* m_LightShader;
+	LightShaderClass* m_LightShader;     // ¾Ö´Ï¸ÞÀÌ¼Ç ¸ðµ¨¿ë
+	StaticShaderClass* m_StaticShader;   // Á¤Àû ¸ðµ¨¿ë
 
 	// UI °´Ã¼µé
 	BitmapClass* m_Bitmap;

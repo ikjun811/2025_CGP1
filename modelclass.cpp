@@ -3,6 +3,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "modelclass.h"
 #include <string> 
+#include <wincodec.h> 
+#pragma comment(lib, "windowscodecs.lib")
 
 ModelClass::ModelClass()
 {
@@ -23,27 +25,58 @@ ModelClass::~ModelClass()
 }
 
 
-bool ModelClass::Initialize(ID3D11Device* device, const WCHAR* modelFilename, const WCHAR* textureFilename) 
+bool ModelClass::Initialize(ID3D11Device* device, const WCHAR* modelFilename, const WCHAR* textureFilename)
 {
-	// 1. 모델 데이터 로드 
-	if (!LoadModel(modelFilename))
+
+	Assimp::Importer importer;
+	std::wstring ws(modelFilename);
+	std::string filename_str(ws.begin(), ws.end());
+
+	const aiScene* pScene = importer.ReadFile(filename_str,
+		aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
+
+	if (!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode)
 	{
 		return false;
 	}
 
-	// 2. 정점/인덱스 버퍼 생성
+	aiMatrix4x4 t = pScene->mRootNode->mTransformation;
+	m_globalInverseTransform = XMLoadFloat4x4(reinterpret_cast<const XMFLOAT4X4*>(&t));
+	m_globalInverseTransform = XMMatrixInverse(nullptr, m_globalInverseTransform);
+
+
+	// 1. 모델 데이터 로드 
+	for (unsigned int i = 0; i < pScene->mNumMeshes; ++i)
+	{
+		ProcessMesh(pScene->mMeshes[i], pScene);
+	}
+	ReadNodeHierarchy(pScene->mRootNode, m_skeletonRoot);
+	m_finalBoneTransforms.resize(m_boneCounter, XMMatrixIdentity());
+
+
+	// 2. 텍스처 로드
+	if (textureFilename) // 외부 텍스처 파일이 주어지면 그것을 사용
+	{
+		if (!LoadTexture(device, textureFilename)) return false;
+	}
+	else // 외부 파일이 없으면 내장 텍스처 로드를 시도
+	{
+		if (!LoadEmbeddedTexture(device, pScene))
+		{
+			// 내장 텍스처도 없으면 실패 처리 (또는 기본 텍스처 사용)
+			// return false; 
+			// 일단은 텍스처 없이 진행하도록 둘 수 있음
+		}
+	}
+
+	// 3. 정점/인덱스 버퍼 생성
 	if (!InitializeBuffers(device))
 	{
 		return false;
 	}
 
-	// 3. 텍스처 로드
-	if (!LoadTexture(device, textureFilename))
-	{
-		return false;
-	}
-
 	return true;
+
 }
 
 
@@ -69,7 +102,11 @@ int ModelClass::GetIndexCount()
 
 ID3D11ShaderResourceView* ModelClass::GetTexture()
 {
-	return m_Texture->GetTexture();
+	if (m_Texture)
+	{
+		return m_Texture->GetTexture();
+	}
+	return nullptr;
 }
 
 
@@ -84,7 +121,7 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 
 	// 정점 버퍼 설정
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_vertices.size();
+	vertexBufferDesc.ByteWidth = sizeof(SkinnedVertex) * m_vertices.size(); // SkinnedVertex 사용
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -110,9 +147,7 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 
 	m_indexCount = m_indices.size();
 
-	// 버퍼 생성 후 CPU 메모리는 비워도 됩니다. (선택사항)
-	m_vertices.clear();
-	m_indices.clear();
+
 
 	return true;
 }
@@ -126,7 +161,7 @@ void ModelClass::ShutdownBuffers()
 
 void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 {
-	unsigned int stride = sizeof(VertexType);
+	unsigned int stride = sizeof(SkinnedVertex);
 	unsigned int offset = 0;
 	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -150,8 +185,7 @@ void ModelClass::ReleaseTexture()
 		m_Texture = nullptr;
 	}
 }
-
-bool ModelClass::LoadModel(const WCHAR* filename)
+ /*bool ModelClass::LoadModel(const WCHAR* filename)
 {
 	std::wstring ws(filename);
 	std::string filename_str(ws.begin(), ws.end());
@@ -171,51 +205,159 @@ bool ModelClass::LoadModel(const WCHAR* filename)
 		// .fbx를 포함한 다른 모든 형식은 Assimp로 시도
 		return LoadModelWithAssimp(filename);
 	}
-}
+}*/
 
-bool ModelClass::LoadModelWithAssimp(const WCHAR* filename)
+/*bool ModelClass::LoadModelWithAssimp(const WCHAR* filename)
 {
 	Assimp::Importer importer;
 	std::wstring ws(filename);
 	std::string filename_str(ws.begin(), ws.end());
 
-	const aiScene* pScene = importer.ReadFile(filename_str, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_GenSmoothNormals);
+	const aiScene* pScene = importer.ReadFile(filename_str,
+		aiProcess_Triangulate |
+		aiProcess_ConvertToLeftHanded |
+		aiProcess_GenSmoothNormals |
+		aiProcess_CalcTangentSpace); // 노멀맵을 위해 탄젠트도 계산
+
 	if (!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode)
 	{
+		// importer.GetErrorString() 으로 에러 로그 출력 추천
 		return false;
 	}
 
-	// 이 예제에서는 첫 번째 메시만 로드합니다. (나중에 여러 메시 로드로 확장 가능)
-	if (pScene->mNumMeshes == 0) return false;
-	aiMesh* pMesh = pScene->mMeshes[0];
+	for (unsigned int i = 0; i < pScene->mNumMeshes; ++i)
+	{
+		ProcessMesh(pScene->mMeshes[i], pScene);
+	}
+
+	// 스켈레톤 계층 구조 읽기
+	ReadNodeHierarchy(pScene->mRootNode, m_skeletonRoot);
+
+	// 최종 뼈 변환 행렬 배열의 크기를 뼈 개수에 맞게 조절
+	m_finalBoneTransforms.resize(m_boneCounter, XMMatrixIdentity());
+
+	return true;
+}*/
+
+
+/*void ModelClass::ProcessNode(aiNode* node, const aiScene* scene)
+{
+	// 현재 노드에 포함된 모든 메쉬를 처리
+	for (unsigned int i = 0; i < node->mNumMeshes; i++)
+	{
+		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+		ProcessMesh(mesh, scene);
+	}
+
+	// 자식 노드들을 재귀적으로 처리
+	for (unsigned int i = 0; i < node->mNumChildren; i++)
+	{
+		ProcessNode(node->mChildren[i], scene);
+	}
+}*/
+
+void ModelClass::ReadNodeHierarchy(const aiNode* pNode, BoneNode& outNode)
+{
+	outNode.name = pNode->mName.C_Str();
+	aiMatrix4x4 t = pNode->mTransformation;
+
+	outNode.transformation = XMLoadFloat4x4(reinterpret_cast<const XMFLOAT4X4*>(&t));
+
+	for (unsigned int i = 0; i < pNode->mNumChildren; i++)
+	{
+		BoneNode childNode;
+		ReadNodeHierarchy(pNode->mChildren[i], childNode);
+		outNode.children.push_back(childNode);
+	}
+}
+
+
+void ModelClass::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+{
+	// 기존 정점 개수를 기억 (인덱스 오프셋으로 사용)
+	int vertexOffset = m_vertices.size();
 
 	// 정점 데이터 채우기
-	m_vertices.resize(pMesh->mNumVertices);
-	for (unsigned int i = 0; i < pMesh->mNumVertices; i++)
+	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
-		m_vertices[i].position = XMFLOAT3(pMesh->mVertices[i].x, pMesh->mVertices[i].y, pMesh->mVertices[i].z);
+		SkinnedVertex vertex;
+		vertex.Position = XMFLOAT3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
 
-		if (pMesh->HasNormals())
-			m_vertices[i].normal = XMFLOAT3(pMesh->mNormals[i].x, pMesh->mNormals[i].y, pMesh->mNormals[i].z);
-		else
-			m_vertices[i].normal = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		if (mesh->HasNormals())
+			vertex.Normal = XMFLOAT3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
 
-		if (pMesh->HasTextureCoords(0))
-			m_vertices[i].texture = XMFLOAT2(pMesh->mTextureCoords[0][i].x, pMesh->mTextureCoords[0][i].y);
+		if (mesh->HasTextureCoords(0))
+			vertex.TexCoord = XMFLOAT2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
 		else
-			m_vertices[i].texture = XMFLOAT2(0.0f, 0.0f);
+			vertex.TexCoord = XMFLOAT2(0.0f, 0.0f);
+
+		m_vertices.push_back(vertex);
 	}
 
 	// 인덱스 데이터 채우기
-	for (unsigned int i = 0; i < pMesh->mNumFaces; i++)
+	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 	{
-		aiFace face = pMesh->mFaces[i];
+		aiFace face = mesh->mFaces[i];
 		for (unsigned int j = 0; j < face.mNumIndices; j++)
-			m_indices.push_back(face.mIndices[j]);
+			m_indices.push_back(vertexOffset + face.mIndices[j]);
 	}
 
-	return true;
+	// 뼈 데이터 처리
+	ProcessBones(mesh);
 }
+
+
+void ModelClass::ProcessBones(aiMesh* mesh)
+{
+	for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+	{
+		aiBone* bone = mesh->mBones[boneIndex];
+		std::string boneName = bone->mName.C_Str();
+		int boneID = -1;
+
+		// 이 뼈가 처음 발견된 것이라면, 새로운 ID를 부여하고 맵에 추가
+		if (m_boneInfoMap.find(boneName) == m_boneInfoMap.end())
+		{
+			BoneInfo newBoneInfo;
+			newBoneInfo.id = m_boneCounter;
+
+			// Assimp 행렬을 DirectX 행렬로 변환
+			aiMatrix4x4 t = bone->mOffsetMatrix;
+			newBoneInfo.inverseBindPose = XMLoadFloat4x4(reinterpret_cast<const XMFLOAT4X4*>(&t));
+
+			m_boneInfoMap[boneName] = newBoneInfo;
+			boneID = m_boneCounter;
+			m_boneCounter++;
+		}
+		else
+		{
+			boneID = m_boneInfoMap[boneName].id;
+		}
+
+		// 이 뼈의 영향을 받는 모든 정점들에 ID와 가중치를 기록
+		auto weights = bone->mWeights;
+		int numWeights = bone->mNumWeights;
+
+		for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+		{
+			int vertexId = weights[weightIndex].mVertexId;
+			float weight = weights[weightIndex].mWeight;
+
+			// m_vertices에서 해당 정점을 찾아 뼈 데이터를 추가
+			SkinnedVertex& vertex = m_vertices[vertexId];
+
+			// 최대 4개의 뼈 가중치를 저장할 자리가 있는지 확인하고 채움
+			for (int i = 0; i < 4; ++i)
+			{
+				if (vertex.BoneWeights.x == 0.0f && i == 0) { vertex.BoneIDs.x = boneID; vertex.BoneWeights.x = weight; break; }
+				if (vertex.BoneWeights.y == 0.0f && i == 1) { vertex.BoneIDs.y = boneID; vertex.BoneWeights.y = weight; break; }
+				if (vertex.BoneWeights.z == 0.0f && i == 2) { vertex.BoneIDs.z = boneID; vertex.BoneWeights.z = weight; break; }
+				if (vertex.BoneWeights.w == 0.0f && i == 3) { vertex.BoneIDs.w = boneID; vertex.BoneWeights.w = weight; break; }
+			}
+		}
+	}
+}
+
 
 // --- 기존 OBJ 로더 구현 ---
 bool ModelClass::LoadModelFromObj(const WCHAR* filename)
@@ -333,4 +475,269 @@ bool ModelClass::LoadDataStructures(const WCHAR* filename, int vertexCount, int 
 	}
 
 	return true;
+}
+
+bool ModelClass::LoadAnimation(const WCHAR* animationFilename, const std::string& clipName)
+{
+	Assimp::Importer importer;
+	std::wstring ws(animationFilename);
+	std::string filename_str(ws.begin(), ws.end());
+
+	const aiScene* pScene = importer.ReadFile(filename_str, aiProcess_Triangulate);
+	if (!pScene || !pScene->HasAnimations())
+	{
+		return false; // 애니메이션이 없으면 실패
+	}
+
+	// 이 파일의 첫 번째 애니메이션을 가져옵니다.
+	auto pAnimation = pScene->mAnimations[0];
+	AnimationClip clip;
+	clip.name = clipName;
+	clip.duration = (float)pAnimation->mDuration;
+	clip.ticksPerSecond = (float)pAnimation->mTicksPerSecond;
+
+
+	if (clip.ticksPerSecond == 0.0f)
+	{
+		clip.ticksPerSecond = 30.0f; 
+	}
+
+
+
+	// 각 뼈(채널)에 대한 애니메이션 데이터를 읽습니다.
+	for (unsigned int i = 0; i < pAnimation->mNumChannels; i++)
+	{
+		auto pChannel = pAnimation->mChannels[i];
+		std::string boneName = pChannel->mNodeName.C_Str();
+
+		BoneAnimation boneAnim;
+
+		// 위치 키프레임
+		for (unsigned int j = 0; j < pChannel->mNumPositionKeys; j++)
+		{
+			Keyframe<XMFLOAT3> key;
+			key.timePos = (float)pChannel->mPositionKeys[j].mTime;
+			key.value = XMFLOAT3(pChannel->mPositionKeys[j].mValue.x, pChannel->mPositionKeys[j].mValue.y, pChannel->mPositionKeys[j].mValue.z);
+			boneAnim.positionKeys.push_back(key);
+		}
+
+		// 회전 키프레임 (쿼터니언)
+		for (unsigned int j = 0; j < pChannel->mNumRotationKeys; j++)
+		{
+			Keyframe<XMFLOAT4> key;
+			key.timePos = (float)pChannel->mRotationKeys[j].mTime;
+			key.value = XMFLOAT4(pChannel->mRotationKeys[j].mValue.x, pChannel->mRotationKeys[j].mValue.y, pChannel->mRotationKeys[j].mValue.z, pChannel->mRotationKeys[j].mValue.w);
+			boneAnim.rotationKeys.push_back(key);
+		}
+
+		// 크기 키프레임
+		for (unsigned int j = 0; j < pChannel->mNumScalingKeys; j++)
+		{
+			Keyframe<XMFLOAT3> key;
+			key.timePos = (float)pChannel->mScalingKeys[j].mTime;
+			key.value = XMFLOAT3(pChannel->mScalingKeys[j].mValue.x, pChannel->mScalingKeys[j].mValue.y, pChannel->mScalingKeys[j].mValue.z);
+			boneAnim.scaleKeys.push_back(key);
+		}
+
+		clip.boneAnimations[boneName] = boneAnim;
+	}
+
+	m_animations[clipName] = clip;
+
+	// 만약 현재 재생중인 애니메이션이 없다면, 방금 로드한 클립을 기본값으로 설정
+	if (m_currentAnimation == nullptr)
+	{
+		SetAnimationClip(clipName);
+	}
+
+	return true;
+}
+
+
+void ModelClass::SetAnimationClip(const std::string& clipName)
+{
+	if (m_animations.count(clipName))
+	{
+		m_currentAnimation = &m_animations[clipName];
+		m_animationTime = 0.0f; // 애니메이션을 처음부터 다시 재생
+	}
+}
+
+void ModelClass::UpdateAnimation(float deltaTime)
+{
+	if (!m_currentAnimation) return;
+
+	// 애니메이션 시간 업데이트
+	m_animationTime += m_currentAnimation->ticksPerSecond * deltaTime;
+	if (m_animationTime > m_currentAnimation->duration)
+	{
+		m_animationTime = fmod(m_animationTime, m_currentAnimation->duration); // 루프
+	}
+
+	// 스켈레톤의 루트부터 시작하여 모든 뼈의 최종 변환 행렬을 계산
+	CalculateBoneTransform(m_skeletonRoot, XMMatrixIdentity());
+}
+
+
+void ModelClass::CalculateBoneTransform(const BoneNode& node, const XMMATRIX& parentTransform)
+{
+	std::string nodeName = node.name;
+	XMMATRIX nodeTransform = node.transformation;
+
+	// 이 뼈에 대한 애니메이션 데이터가 있다면, 보간된 변환을 적용
+	if (m_currentAnimation->boneAnimations.count(nodeName))
+	{
+		XMMATRIX scalingMatrix = FindInterpolatedScaling(m_animationTime, nodeName);
+		XMMATRIX rotationMatrix = FindInterpolatedRotation(m_animationTime, nodeName);
+		XMMATRIX translationMatrix = FindInterpolatedPosition(m_animationTime, nodeName);
+
+		nodeTransform = scalingMatrix * rotationMatrix * translationMatrix;
+	}
+
+	XMMATRIX globalTransform = nodeTransform * parentTransform;
+
+
+	if (m_boneInfoMap.count(nodeName))
+	{
+		int boneIndex = m_boneInfoMap[nodeName].id;
+		XMMATRIX inverseBindPose = m_boneInfoMap[nodeName].inverseBindPose;
+
+	
+		m_finalBoneTransforms[boneIndex] = inverseBindPose * globalTransform * m_globalInverseTransform;
+	}
+
+	for (const auto& child : node.children)
+	{
+		CalculateBoneTransform(child, globalTransform);
+	}
+}
+
+XMMATRIX ModelClass::FindInterpolatedPosition(float animationTime, const std::string& boneName)
+{
+	const auto& boneAnim = m_currentAnimation->boneAnimations.at(boneName);
+
+	if (boneAnim.positionKeys.size() == 1)
+	{
+		auto pos = boneAnim.positionKeys[0].value;
+		return XMMatrixTranslation(pos.x, pos.y, pos.z);
+	}
+
+	// 현재 시간에 맞는 키프레임 인덱스 찾기
+	int p0Index = -1;
+	for (unsigned int i = 0; i < boneAnim.positionKeys.size() - 1; i++)
+	{
+		if (animationTime <= boneAnim.positionKeys[i + 1].timePos)
+		{
+			p0Index = i;
+			break;
+		}
+	}
+	if (p0Index == -1) p0Index = boneAnim.positionKeys.size() - 2;
+	int p1Index = p0Index + 1;
+
+	// 두 키프레임 사이의 보간 비율 계산
+	float t0 = boneAnim.positionKeys[p0Index].timePos;
+	float t1 = boneAnim.positionKeys[p1Index].timePos;
+	float scaleFactor = (t1 - t0 == 0.0f) ? 0.0f : (animationTime - t0) / (t1 - t0);
+
+	// 선형 보간
+	XMVECTOR start = XMLoadFloat3(&boneAnim.positionKeys[p0Index].value);
+	XMVECTOR end = XMLoadFloat3(&boneAnim.positionKeys[p1Index].value);
+	XMVECTOR finalPos = XMVectorLerp(start, end, scaleFactor);
+
+	return XMMatrixTranslationFromVector(finalPos);
+}
+
+XMMATRIX ModelClass::FindInterpolatedRotation(float animationTime, const std::string& boneName)
+{
+	const auto& boneAnim = m_currentAnimation->boneAnimations.at(boneName);
+
+	if (boneAnim.rotationKeys.size() == 1)
+	{
+		auto rot = XMLoadFloat4(&boneAnim.rotationKeys[0].value);
+		return XMMatrixRotationQuaternion(rot);
+	}
+
+	int r0Index = -1;
+	for (unsigned int i = 0; i < boneAnim.rotationKeys.size() - 1; i++)
+	{
+		if (animationTime <= boneAnim.rotationKeys[i + 1].timePos)
+		{
+			r0Index = i;
+			break;
+		}
+	}
+	if (r0Index == -1) r0Index = boneAnim.rotationKeys.size() - 2;
+	int r1Index = r0Index + 1;
+
+	float t0 = boneAnim.rotationKeys[r0Index].timePos;
+	float t1 = boneAnim.rotationKeys[r1Index].timePos;
+	float scaleFactor = (t1 - t0 == 0.0f) ? 0.0f : (animationTime - t0) / (t1 - t0);
+
+	XMVECTOR start = XMLoadFloat4(&boneAnim.rotationKeys[r0Index].value);
+	XMVECTOR end = XMLoadFloat4(&boneAnim.rotationKeys[r1Index].value);
+	XMVECTOR finalRot = XMQuaternionSlerp(start, end, scaleFactor);
+	finalRot = XMQuaternionNormalize(finalRot);
+
+	return XMMatrixRotationQuaternion(finalRot);
+}
+
+XMMATRIX ModelClass::FindInterpolatedScaling(float animationTime, const std::string& boneName)
+{
+	const auto& boneAnim = m_currentAnimation->boneAnimations.at(boneName);
+
+	if (boneAnim.scaleKeys.size() == 1)
+	{
+		auto scale = boneAnim.scaleKeys[0].value;
+		return XMMatrixScaling(scale.x, scale.y, scale.z);
+	}
+
+	int s0Index = -1;
+	for (unsigned int i = 0; i < boneAnim.scaleKeys.size() - 1; i++)
+	{
+		if (animationTime <= boneAnim.scaleKeys[i + 1].timePos)
+		{
+			s0Index = i;
+			break;
+		}
+	}
+	if (s0Index == -1) s0Index = boneAnim.scaleKeys.size() - 2;
+	int s1Index = s0Index + 1;
+
+	float t0 = boneAnim.scaleKeys[s0Index].timePos;
+	float t1 = boneAnim.scaleKeys[s1Index].timePos;
+	float scaleFactor = (t1 - t0 == 0.0f) ? 0.0f : (animationTime - t0) / (t1 - t0);
+
+	XMVECTOR start = XMLoadFloat3(&boneAnim.scaleKeys[s0Index].value);
+	XMVECTOR end = XMLoadFloat3(&boneAnim.scaleKeys[s1Index].value);
+	XMVECTOR finalScale = XMVectorLerp(start, end, scaleFactor);
+
+	return XMMatrixScalingFromVector(finalScale);
+}
+
+bool ModelClass::LoadEmbeddedTexture(ID3D11Device* device, const aiScene* scene)
+{
+	if (!scene->HasTextures())
+	{
+		return false; // 내장 텍스처가 없음
+	}
+
+	// 첫 번째 내장 텍스처를 가져옵니다.
+	aiTexture* embeddedTexture = scene->mTextures[0];
+
+	// mHeight가 0이면 압축된 포맷(PNG, JPG 등)입니다.
+	if (embeddedTexture->mHeight == 0)
+	{
+		m_Texture = new TextureClass;
+		if (!m_Texture) return false;
+
+		// TextureClass의 새로운 Initialize 함수를 호출합니다.
+		return m_Texture->Initialize(device,
+			reinterpret_cast<const void*>(embeddedTexture->pcData), // 데이터 포인터
+			embeddedTexture->mWidth);                              // 데이터 크기
+	}
+
+	// TODO: 압축되지 않은 ARGB 데이터에 대한 처리 (필요 시 구현)
+
+	return false;
 }

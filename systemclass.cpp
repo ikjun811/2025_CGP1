@@ -229,7 +229,7 @@ bool SystemClass::Frame()
 
 
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame(m_Fps->GetFps(), m_Cpu->GetCpuPercentage(), m_Camera);
+	result = m_Graphics->Frame(m_Fps->GetFps(), m_Cpu->GetCpuPercentage(), m_Camera, frameTime);
 	if (!result)
 	{
 		return false;

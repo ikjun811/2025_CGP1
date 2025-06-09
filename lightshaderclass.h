@@ -21,6 +21,8 @@ const int NUM_LIGHTS = 4;
 
 #include "lightclass.h"
 
+#define MAX_BONES 256
+
 using namespace std;
 using namespace DirectX;
 
@@ -37,6 +39,12 @@ private:
 		XMMATRIX view;
 		XMMATRIX projection;
 	};
+
+	struct BoneBufferType
+	{
+		XMMATRIX finalBones[MAX_BONES];
+	};
+
 
 	// HLSL의 Light 구조체와 1:1로 대응되는 구조체
 	struct Light
@@ -61,7 +69,8 @@ public:
 	// Render 함수의 인자가 더 간단해집니다.
 	bool Render(ID3D11DeviceContext* deviceContext, int indexCount,
 		XMMATRIX world, XMMATRIX view, XMMATRIX projection,
-		ID3D11ShaderResourceView* texture, const std::vector<LightClass*>& lights);
+		ID3D11ShaderResourceView* texture, const std::vector<LightClass*>& lights,
+		const std::vector<XMMATRIX>& boneTransforms);
 
 private:
 	bool InitializeShader(ID3D11Device* device, HWND hwnd, const WCHAR* filename);
@@ -70,7 +79,8 @@ private:
 
 	bool SetShaderParameters(ID3D11DeviceContext* deviceContext,
 		XMMATRIX world, XMMATRIX view, XMMATRIX projection,
-		ID3D11ShaderResourceView* texture, const std::vector<LightClass*>& lights);
+		ID3D11ShaderResourceView* texture, const std::vector<LightClass*>& lights,
+		const std::vector<XMMATRIX>& boneTransforms);
 	void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount);
 
 private:
@@ -81,7 +91,8 @@ private:
 
 	// 상수 버퍼
 	ID3D11Buffer* m_matrixBuffer;
-	ID3D11Buffer* m_lightBuffer; // 광원 버퍼를 하나로 통합
+	ID3D11Buffer* m_boneBuffer;
+	ID3D11Buffer* m_lightBuffer;
 };
 
 #endif
