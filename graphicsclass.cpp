@@ -136,7 +136,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// 등대 가로등
 
 	// 등대 1
-	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(-20.0f, -1.5f, 32.0f) }); // index 1: lighthouse
+	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(-20.0f, -2.0f, 32.0f) }); // index 1: lighthouse
 
 	// 등대 2
 	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(120.0f, -4.0f, 130.0f) });
@@ -157,21 +157,47 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// --- 캐릭터와 보트의 자연스러운 배치 ---
 
-	// [캐릭터] 왼쪽 앞 섬(섬 2)의 다리 입구에 서서 중앙 섬을 바라보는 구도.
-	XMVECTOR charInitialPos = { -28.0f, -1.5f, 18.0f };
+	// [캐릭터] -20.0f, -1.8f, 150.0f
+	XMFLOAT3 charInitialPos = { -20.0f, -1.8f, 150.0f };
+	float charInitialRotation = XMConvertToRadians(180.0f); // << 180도 회전시켜 Z축 양의 방향이 정면이 되도록
 	m_SceneInstances.push_back({
 		6,
-		XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(45.0f)) * XMMatrixTranslationFromVector(charInitialPos),
-		false,
-		charInitialPos
-		}); // index 6: char (스케일은 작게 유지)
+		XMMatrixIdentity(), // worldTransform (Frame에서 계산)
+		XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(charInitialRotation), // baseTransform
+		charInitialPos,
+		charInitialRotation,
+		true,  // canMove
+		false  // isAnimated
+		});
+
+
 
 	// [움직이는 보트] 섬들 사이를 항해하는 모습.
-	XMVECTOR boatInitialPos = { -10.0f, -5.0f, 75.0f };
-	m_SceneInstances.push_back({ 3, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslationFromVector(boatInitialPos), true, boatInitialPos }); // index 3: boat
+	XMFLOAT3 boatInitialPos = { -10.0f, -5.0f, 75.0f };
+	float boatInitialRotation = XMConvertToRadians(0.0f);
+	m_SceneInstances.push_back({
+		3,
+		XMMatrixIdentity(),
+		XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixRotationY(boatInitialRotation), // baseTransform
+		boatInitialPos,
+		boatInitialRotation,
+		false, // canMove
+		true,  // isAnimated
+		true,  // movingForward
+		0.0f   // animationOffset
+		});
 
 	// [정박한 보트] 중앙 섬(섬 1) 근처에 정박한 모습.
-	m_SceneInstances.push_back({ 3, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixRotationY(XMConvertToRadians(100.0f)) * XMMatrixTranslation(40.0f, -5.0f, 80.0f) });
+	XMFLOAT3 parkedBoatPos = { 40.0f, -5.0f, 80.0f };
+	float parkedBoatRotation = XMConvertToRadians(100.0f);
+	m_SceneInstances.push_back({
+		3,
+		XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixRotationY(parkedBoatRotation) * XMMatrixTranslation(parkedBoatPos.x, parkedBoatPos.y, parkedBoatPos.z), // 정적 객체는 worldTransform을 바로 계산
+		XMMatrixIdentity(), // baseTransform (사용 안 함)
+		parkedBoatPos,
+		parkedBoatRotation,
+		false, false // canMove, isAnimated
+		});
 
 	// [배경용 floor] 바다 역할을 할 기본 바닥. 매우 넓게 깔아줍니다.
 	m_SceneInstances.push_back({ 0, XMMatrixScaling(5.0f, 1.0f, 5.0f) * XMMatrixTranslation(0.0f, -6.0f, 0.0f) }); // index 0: floor
@@ -256,6 +282,10 @@ void GraphicsClass::Shutdown()
 
 bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, float deltaTime)
 {
+
+	//카메라(나) 위치
+	XMFLOAT3 cameraPosition = gameCamera->GetPosition();
+
 	// 보트 직선 운동 업데이트
 	float moveRange = 5.0f;
 	if (m_BoatMovingForward)
@@ -274,18 +304,61 @@ bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, float delta
 	{
 		if (instance.isAnimated)
 		{
+			float moveRange = 20.0f;
+			float boatSpeed = 5.0f;
 
-			XMMATRIX scaleMatrix = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+			if (instance.movingForward) {
+				instance.animationOffset += boatSpeed * deltaTime;
+				if (instance.animationOffset > moveRange) instance.movingForward = false;
+			}
+			else {
+				instance.animationOffset -= boatSpeed * deltaTime;
+				if (instance.animationOffset < -moveRange) instance.movingForward = true;
+			}
 
-			XMMATRIX translationMatrix = XMMatrixTranslation(
-				XMVectorGetX(instance.initialPosition),
-				XMVectorGetY(instance.initialPosition),
-				XMVectorGetZ(instance.initialPosition) + m_BoatZOffset 
-			);
-			// 3. 최종 월드 행렬을 조합합니다.
-			instance.worldTransform = scaleMatrix * translationMatrix;
+			// 애니메이션 변환 
+			XMMATRIX animationTransform = XMMatrixTranslation(0.0f, 0.0f, instance.animationOffset);
+
+			// 월드 변환 행렬 계산
+			instance.worldTransform = instance.baseTransform 
+				* animationTransform     
+				* XMMatrixTranslation(instance.currentPosition.x, instance.currentPosition.y, instance.currentPosition.z);
+		}
+
+		// 움직일 수 있는 객체(male.fbx)만 처리
+		else if (instance.canMove)
+		{
+			float dx = cameraPosition.x - instance.currentPosition.x;
+			float dz = cameraPosition.z - instance.currentPosition.z;
+			float distance = sqrt(dx * dx + dz * dz);
+
+			float followDistance = 30.0f;
+			float stopDistance = 3.0f;
+			float moveSpeed = 5.0f;
+
+			if (distance < followDistance)
+			{
+				// 회전: atan2 + 180도(PI) 보정
+				instance.currentYRotation = atan2(dx, dz); // << 이 각도는 Z+ 방향이 0도
+
+				if (distance > stopDistance) {
+					// 이동
+					XMVECTOR moveDirection = XMVector3Normalize(XMVectorSet(dx, 0.0f, dz, 0.0f));
+					XMVECTOR movement = moveDirection * moveSpeed * deltaTime;
+					instance.currentPosition.x += XMVectorGetX(movement);
+					instance.currentPosition.z += XMVectorGetZ(movement);
+				}
+			}
+
+			// 월드 변환 행렬 계산
+			// 순서: (스케일*초기회전) -> (카메라 바라보도록 회전) -> (월드 위치로 이동)
+			instance.worldTransform = instance.baseTransform
+				* XMMatrixRotationY(instance.currentYRotation)
+				* XMMatrixTranslation(instance.currentPosition.x, instance.currentPosition.y, instance.currentPosition.z);
 		}
 	}
+
+
 
 	//float deltaTime = 1.0f / 60.0f; 
 	for (auto& model : m_Models)
@@ -308,6 +381,9 @@ bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, float delta
 		// SetDirection을 호출하여 조명의 방향을 실시간으로 변경
 		m_Lights[1]->SetDirection(newDirX, -0.3f, newDirZ);
 	}
+
+
+
 
 	if (!m_Text->SetFPS(fps, m_D3D->GetDeviceContext())) return false;
 	if (!m_Text->SetCPU(cpu, m_D3D->GetDeviceContext())) return false;
@@ -339,7 +415,7 @@ bool GraphicsClass::Render(CameraClass* gameCamera)
 		m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Bitmap->GetIndexCount(), worldMatrix, uiViewMatrix, orthoMatrix, m_Bitmap->GetTexture());
 	}
 	m_D3D->TurnZBufferOn(); // 3D 씬을 그리기 위해 Z-버퍼를 다시 켭니다.
-	
+
 	// 3. 모델 렌더링
 	for (const auto& instance : m_SceneInstances)
 	{
@@ -388,5 +464,3 @@ bool GraphicsClass::Render(CameraClass* gameCamera)
 
 	return true;
 }
-
-

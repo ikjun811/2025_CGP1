@@ -37,12 +37,18 @@ struct SceneObjectInstance
 {
 	int modelIndex;
 	XMMATRIX worldTransform;
+	XMMATRIX baseTransform;
+
+	// 동적 상태 변수들
+	XMFLOAT3 currentPosition;
+	float currentYRotation;
+	bool canMove = false;
 	bool isAnimated = false;
 
-	// 애니메이션을 위한 추가 데이터 (선택적이지만 좋은 방법)
-	XMVECTOR initialPosition; // 객체의 초기 위치
+	// isAnimated를 위한 상태
+	bool movingForward = true;
+	float animationOffset = 0.0f;
 };
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
