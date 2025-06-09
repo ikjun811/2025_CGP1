@@ -9,7 +9,7 @@ CameraClass::CameraClass()
 	m_position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_rotation = XMFLOAT3(0.0f, 0.0f, 0.0f); // x: pitch, y: yaw, z: roll
 
-	m_moveSpeed = 10.0f;
+	m_moveSpeed = 20.0f;
 }
 
 

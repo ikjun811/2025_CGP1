@@ -137,7 +137,7 @@ private:
 	//void ProcessNode(aiNode* node, const aiScene* scene);
 	void ReadNodeHierarchy(const aiNode* pNode, BoneNode& outNode);
 	void ProcessMesh(aiMesh* mesh, const aiScene* scene);
-	void ProcessBones(aiMesh* mesh);
+	void ProcessBones(aiMesh* mesh, int vertexOffset);
 	bool LoadEmbeddedTexture(ID3D11Device* device, const aiScene* scene);
 
 	// 2. 기존의 수동 OBJ 모델 로더
@@ -172,7 +172,7 @@ private:
 
 	std::vector<XMMATRIX> m_finalBoneTransforms;
 
-	XMMATRIX m_globalInverseTransform;
+	XMMATRIX m_rootNodeTransform;
 
 };
 

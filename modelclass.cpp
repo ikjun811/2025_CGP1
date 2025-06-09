@@ -41,8 +41,13 @@ bool ModelClass::Initialize(ID3D11Device* device, const WCHAR* modelFilename, co
 	}
 
 	aiMatrix4x4 t = pScene->mRootNode->mTransformation;
-	m_globalInverseTransform = XMLoadFloat4x4(reinterpret_cast<const XMFLOAT4X4*>(&t));
-	m_globalInverseTransform = XMMatrixInverse(nullptr, m_globalInverseTransform);
+	m_rootNodeTransform = XMMATRIX(
+		t.a1, t.a2, t.a3, t.a4,
+		t.b1, t.b2, t.b3, t.b4,
+		t.c1, t.c2, t.c3, t.c4,
+		t.d1, t.d2, t.d3, t.d4
+	);
+
 
 
 	// 1. 모델 데이터 로드 
@@ -260,7 +265,6 @@ void ModelClass::ReadNodeHierarchy(const aiNode* pNode, BoneNode& outNode)
 {
 	outNode.name = pNode->mName.C_Str();
 	aiMatrix4x4 t = pNode->mTransformation;
-
 	outNode.transformation = XMLoadFloat4x4(reinterpret_cast<const XMFLOAT4X4*>(&t));
 
 	for (unsigned int i = 0; i < pNode->mNumChildren; i++)
@@ -303,11 +307,11 @@ void ModelClass::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	}
 
 	// 뼈 데이터 처리
-	ProcessBones(mesh);
+	ProcessBones(mesh, vertexOffset);
 }
 
 
-void ModelClass::ProcessBones(aiMesh* mesh)
+void ModelClass::ProcessBones(aiMesh* mesh, int vertexOffset)
 {
 	for (unsigned int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
 	{
@@ -344,7 +348,7 @@ void ModelClass::ProcessBones(aiMesh* mesh)
 			float weight = weights[weightIndex].mWeight;
 
 			// m_vertices에서 해당 정점을 찾아 뼈 데이터를 추가
-			SkinnedVertex& vertex = m_vertices[vertexId];
+			SkinnedVertex& vertex = m_vertices[vertexOffset + vertexId];
 
 			// 최대 4개의 뼈 가중치를 저장할 자리가 있는지 확인하고 채움
 			for (int i = 0; i < 4; ++i)
@@ -575,7 +579,7 @@ void ModelClass::UpdateAnimation(float deltaTime)
 	}
 
 	// 스켈레톤의 루트부터 시작하여 모든 뼈의 최종 변환 행렬을 계산
-	CalculateBoneTransform(m_skeletonRoot, XMMatrixIdentity());
+	CalculateBoneTransform(m_skeletonRoot, m_rootNodeTransform);
 }
 
 
@@ -591,6 +595,8 @@ void ModelClass::CalculateBoneTransform(const BoneNode& node, const XMMATRIX& pa
 		XMMATRIX rotationMatrix = FindInterpolatedRotation(m_animationTime, nodeName);
 		XMMATRIX translationMatrix = FindInterpolatedPosition(m_animationTime, nodeName);
 
+		XMMATRIX animationTransform = translationMatrix * rotationMatrix * scalingMatrix;
+
 		nodeTransform = scalingMatrix * rotationMatrix * translationMatrix;
 	}
 
@@ -601,9 +607,8 @@ void ModelClass::CalculateBoneTransform(const BoneNode& node, const XMMATRIX& pa
 	{
 		int boneIndex = m_boneInfoMap[nodeName].id;
 		XMMATRIX inverseBindPose = m_boneInfoMap[nodeName].inverseBindPose;
-
 	
-		m_finalBoneTransforms[boneIndex] = inverseBindPose * globalTransform * m_globalInverseTransform;
+		m_finalBoneTransforms[boneIndex] = inverseBindPose * globalTransform;
 	}
 
 	for (const auto& child : node.children)

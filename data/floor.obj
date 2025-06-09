@@ -1,17 +1,27 @@
+# Wavefront OBJ file
+# A simple plane for the floor, corrected for proper rendering in DirectX.
+
+# 1. Vertex positions (정점 위치)
+# x, y, z coordinates. Plane is on the Y=0 axis.
 v -200.0 0.0  200.0
 v  200.0 0.0  200.0
-v -200.0 0.0 -200.0
 v  200.0 0.0 -200.0
+v -200.0 0.0 -200.0
 
-# Texture coordinates to cover the plane
-vt 0.0 0.0
-vt 200.0 0.0
-vt 0.0 200.0
-vt 200.0 1.0
+# 2. Texture coordinates (텍스처 좌표 - UV)
+# U and V values. Using a 10x10 tiling for repeating texture.
+# (0,0) is bottom-left, (1,0) is bottom-right, (0,1) is top-left.
+vt 0.0  0.0
+vt 10.0 0.0
+vt 10.0 10.0
+vt 0.0  10.0
 
-# Normals
+# 3. Vertex normals (법선 벡터)
+# All pointing straight up (Y-axis) for a flat surface.
 vn 0.0 1.0 0.0
 
-# Faces with vertices, texture coordinates, and normals
-f 1/1/1 2/2/1 4/4/1
-f 1/1/1 4/4/1 3/3/1
+# 4. Faces (면 정보)
+# Format: vertex_index/texture_index/normal_index
+# Both triangles are defined in a counter-clockwise order for DirectX.
+f 1/1/1 2/2/1 3/3/1
+f 1/1/1 3/3/1 4/4/1

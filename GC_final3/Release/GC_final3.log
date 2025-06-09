@@ -1,10 +1,15 @@
-﻿  lightshaderclass.cpp
-C:\Users\0320\Documents\GitHub\2025_CGP1\lightshaderclass.cpp(68,20): warning C4101: 'lightColorBufferDesc' :참조되지 않은 지역 변수입니다.
-C:\Users\0320\Documents\GitHub\2025_CGP1\lightshaderclass.cpp(67,20): warning C4101: 'matrixBufferDesc' :참조되지 않은 지역 변수입니다.
-C:\Users\0320\Documents\GitHub\2025_CGP1\lightshaderclass.cpp(69,20): warning C4101: 'lightPositionBufferDesc' :참조되지 않은 지역 변수입니다.
+﻿  graphicsclass.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\memory(3597,35): warning C4316: 'ModelClass': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
+  (소스 파일 'graphicsclass.cpp'을(를) 컴파일하는 중)
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\memory(3597,35):
+      템플릿 인스턴스화 컨텍스트(가장 오래된 인스턴스화 컨텍스트)가
+          C:\Users\0320\Documents\GitHub\2025_CGP1\graphicsclass.cpp(54,21):
+          컴파일되는 함수 템플릿 인스턴스화 'std::unique_ptr<ModelClass,std::default_delete<ModelClass>> std::make_unique<ModelClass,,0>(void)'에 대한 참조를 확인하세요.
+  
   코드를 생성하고 있습니다.
-  Previous IPDB and IOBJ mismatch, fall back to full compilation.
-  All 1300 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  1 of 1073 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
   GC_final3.vcxproj -> C:\Users\0320\Documents\GitHub\2025_CGP1\Release\GC_final3.exe
   'pwsh.exe'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는

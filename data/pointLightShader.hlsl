@@ -64,39 +64,43 @@ PixelInputType LightVertexShader(VertexInputType input)
     PixelInputType output;
    
     // ---- 스키닝 계산 시작 ----
-    matrix skinTransform = (matrix) 0; // 0 행렬로 초기화
+    // 최종 스키닝된 위치와 노멀을 저장할 변수 (0으로 초기화)
+    float4 skinnedPosition = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    float3 skinnedNormal = float3(0.0f, 0.0f, 0.0f);
 
-    // 4개의 뼈에 대한 변환 행렬을 가중치에 따라 합산
-    skinTransform += finalBones[input.boneIDs.x] * input.weights.x;
-    skinTransform += finalBones[input.boneIDs.y] * input.weights.y;
-    skinTransform += finalBones[input.boneIDs.z] * input.weights.z;
-    skinTransform += finalBones[input.boneIDs.w] * input.weights.w;
+    // 1. 각 뼈에 의해 변환된 위치와 노멀을 계산하고, 가중치를 곱하여 누적
+    skinnedPosition += mul(input.position, finalBones[input.boneIDs.x]) * input.weights.x;
+    skinnedPosition += mul(input.position, finalBones[input.boneIDs.y]) * input.weights.y;
+    skinnedPosition += mul(input.position, finalBones[input.boneIDs.z]) * input.weights.z;
+    skinnedPosition += mul(input.position, finalBones[input.boneIDs.w]) * input.weights.w;
 
-    // 원본 위치와 노멀에 스키닝(뼈대) 변환을 적용
-    float4 skinnedPosition = mul(input.position, skinTransform);
-    // 노멀은 위치가 아니므로 w=0으로 설정하여 변환 (이동에 영향을 받지 않도록)
-    float3 skinnedNormal = (float3) mul(float4(input.normal, 0.0f), skinTransform);
+    // (노멀은 이동(translation)에 영향을 받지 않도록 w=0으로 변환 후 계산)
+    skinnedNormal += mul(float4(input.normal, 0.0f), finalBones[input.boneIDs.x]).xyz * input.weights.x;
+    skinnedNormal += mul(float4(input.normal, 0.0f), finalBones[input.boneIDs.y]).xyz * input.weights.y;
+    skinnedNormal += mul(float4(input.normal, 0.0f), finalBones[input.boneIDs.z]).xyz * input.weights.z;
+    skinnedNormal += mul(float4(input.normal, 0.0f), finalBones[input.boneIDs.w]).xyz * input.weights.w;
     // ---- 스키닝 계산 종료 ----
 
+    // 원본 위치의 w 컴포넌트는 1이어야 하므로, 계산 후 다시 설정
     skinnedPosition.w = 1.0f;
 
-	// 최종 스크린 좌표 계산 (스키닝된 위치 사용)
+    // 최종 스크린 좌표 계산 (스키닝된 위치 사용)
     output.position = mul(skinnedPosition, worldMatrix);
     output.position = mul(output.position, viewMatrix);
     output.position = mul(output.position, projectionMatrix);
     
-	// 텍스처 좌표 전달
+    // 텍스처 좌표 전달
     output.tex = input.tex;
     
-	// 법선을 월드 공간으로 변환하고 정규화 (스키닝된 노멀 사용)
+    // 법선을 월드 공간으로 변환하고 정규화 (스키닝된 노멀 사용)
     output.normal = mul(skinnedNormal, (float3x3) worldMatrix);
     output.normal = normalize(output.normal);
-
-    // 정점의 월드 좌표 계산하여 전달 (스키닝된 위치 사용)
     output.worldPosition = mul(skinnedPosition, worldMatrix).xyz;
+
 
     return output;
 }
+
 
 
 // -- Pixel Shader --
@@ -107,7 +111,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float4 textureColor = shaderTexture.Sample(SampleType, input.tex);
     
     // 최종 색상을 더해갈 변수 (Ambient Light로 초기화하여 어두운 곳도 보이게 함)
-    float4 finalColor = float4(0.15f, 0.15f, 0.15f, 1.0f);
+    float4 finalColor = float4(0.01f, 0.01f, 0.01f, 1.0f);
 
     // 모든 광원에 대해 조명 계산을 반복합니다.
     for (int i = 0; i < NUM_LIGHTS; i++)

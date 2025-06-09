@@ -336,15 +336,12 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
 	// --- Matrix Buffer 업데이트 (b0) ---
-	world = XMMatrixTranspose(world);
-	view = XMMatrixTranspose(view);
-	projection = XMMatrixTranspose(projection);
 	result = deviceContext->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result)) return false;
 	MatrixBufferType* dataPtr = (MatrixBufferType*)mappedResource.pData;
-	dataPtr->world = world;
-	dataPtr->view = view;
-	dataPtr->projection = projection;
+	dataPtr->world = XMMatrixTranspose(world);
+	dataPtr->view = XMMatrixTranspose(view);
+	dataPtr->projection = XMMatrixTranspose(projection);
 	deviceContext->Unmap(m_matrixBuffer, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, &m_matrixBuffer);
 
@@ -353,8 +350,6 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	result = deviceContext->Map(m_boneBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result)) return false;
 	BoneBufferType* dataPtrBones = (BoneBufferType*)mappedResource.pData;
-
-	// C++의 뼈 변환 행렬들을 복사
 	for (size_t i = 0; i < boneTransforms.size(); ++i)
 	{
 		if (i < MAX_BONES)

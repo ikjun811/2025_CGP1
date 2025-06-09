@@ -66,74 +66,106 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	if (!loadModel(L"./data/Boat.obj", L"./data/Boat.dds")) return false;           // index 3: boat
 	if (!loadModel(L"./data/streetlight.obj", L"./data/streetlight.dds")) return false; // index 4: streetlight
 	if (!loadModel(L"./data/Rock.obj", L"./data/Rock.dds")) return false;           // index 5: rock
-	if (!loadModel(L"./data/male.fbx", L"./data/peopleColors.dds")) return false; // index 6 char
+	if (!loadModel(L"./data/male.fbx")) return false; // index 6 char
 	//if (!loadModel(L"./data/character.fbx")) return false;
 
 	/*	m_Models[6]->LoadAnimation(L"./data/male_idle1_200f.fbx", "idle");
 	m_Models[6]->LoadAnimation(L"./data/male_running_20f.fbx", "running");
 	m_Models[6]->SetAnimationClip("idle"); */
 
-	m_Models[6]->LoadAnimation(L"./data/idle.fbx", "idle");
-	m_Models[6]->LoadAnimation(L"./data/running.fbx", "running");
-	m_Models[6]->LoadAnimation(L"./data/attack.fbx", "attack");
-	m_Models[6]->LoadAnimation(L"./data/die.fbx", "die");
-	m_Models[6]->SetAnimationClip("running");
+	//m_Models[6]->LoadAnimation(L"./data/idle.fbx", "idle");
+	//m_Models[6]->LoadAnimation(L"./data/running.fbx", "running");
+	//m_Models[6]->LoadAnimation(L"./data/attack.fbx", "attack");
+	//m_Models[6]->LoadAnimation(L"./data/die.fbx", "die");
+	//m_Models[6]->SetAnimationClip("idle");
+
 
 
 
 	// --- 2. 씬에 객체 인스턴스 배치 ---
+	 m_SceneInstances.clear();
+
 	// 로드된 모델(인덱스)을 사용하여 씬에 여러 개의 인스턴스를 배치합니다.
-	m_SceneInstances.push_back({ 0, XMMatrixTranslation(0.0f, -3.0f, 0.0f), false, {0.0f, -3.0f, 0.0f} }); // Floor
 
-	// Lighthouses (3개)
-	m_SceneInstances.push_back({ 1, XMMatrixScaling(0.8f, 0.8f, 0.8f) * XMMatrixTranslation(0.0f, 0.0f, 50.0f) });
-	m_SceneInstances.push_back({ 1, XMMatrixScaling(0.8f, 0.8f, 0.8f) * XMMatrixTranslation(20.0f, 0.0f, 70.0f) });
-	m_SceneInstances.push_back({ 1, XMMatrixScaling(0.8f, 0.8f, 0.8f) * XMMatrixTranslation(-20.0f, 0.0f, 80.0f) });
+	// 섬 1]
+	m_SceneInstances.push_back({ 5, XMMatrixScaling(2.0f, 0.3f, 1.5f) * XMMatrixTranslation(0.0f, -5.0f, 0.0f) }); // index 5: rock
 
-	// Bridges (2개)
-	m_SceneInstances.push_back({ 2, XMMatrixScaling(3.0f, 1.0f, 4.0f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslation(0.0f, 2.0f, 50.0f) });
-	m_SceneInstances.push_back({ 2, XMMatrixScaling(3.0f, 1.0f, 4.0f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslation(0.0f, 2.0f, 25.0f) });
+	// 섬 2
+	m_SceneInstances.push_back({ 5, XMMatrixScaling(1.5f, 0.3f, 1.0f) * XMMatrixRotationY(XMConvertToRadians(30.0f)) * XMMatrixTranslation(100.0f, -5.0f, 100.0f) });
 
-	// Boats (3개) - 마지막 보트가 움직임
-	m_SceneInstances.push_back({ 3, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslation(-40.0f, 0.0f, 70.0f), false, {-40.0f, 0.0f, 70.0f} });
-	m_SceneInstances.push_back({ 3, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslation(0.0f, 2.0f, 25.0f), false, {0.0f, 2.0f, 25.0f} });
+	// 섬 3
+	m_SceneInstances.push_back({ 5, XMMatrixScaling(1.0f, 0.3f, 0.8f) * XMMatrixRotationY(XMConvertToRadians(0.0f)) * XMMatrixTranslation(0.0f, -4.0f, 150.0f) });
 
-	XMVECTOR boatInitialPos = { 40.0f, 0.0f, 50.0f };
-	m_SceneInstances.push_back({ 3, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslationFromVector(boatInitialPos), true, boatInitialPos });
+	// 섬 4
+	m_SceneInstances.push_back({ 5, XMMatrixScaling(1.0f, 0.4f, 0.8f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslation(-60.0f, -2.0f, 240.0f) });
 
-	// Streetlights (3개)
-	m_SceneInstances.push_back({ 4, XMMatrixScaling(3.0f, 3.0f, 3.0f) * XMMatrixTranslation(-6.5f, 2.2f, 40.0f) });
-	m_SceneInstances.push_back({ 4, XMMatrixScaling(3.0f, 3.0f, 3.0f) * XMMatrixTranslation(6.5f, 2.2f, 30.0f) });
-	m_SceneInstances.push_back({ 4, XMMatrixScaling(3.0f, 3.0f, 3.0f) * XMMatrixTranslation(-6.5f, 2.2f, 20.0f) });
 
-	// Rocks (3개)
-	m_SceneInstances.push_back({ 5, XMMatrixScaling(0.2f, 0.3f, 0.2f) * XMMatrixTranslation(0.0f, 1.0f, 50.0f) });
-	m_SceneInstances.push_back({ 5, XMMatrixScaling(0.2f, 0.3f, 0.2f) * XMMatrixTranslation(20.0f, 0.0f, 70.0f) });
-	m_SceneInstances.push_back({ 5, XMMatrixScaling(0.2f, 0.3f, 0.2f) * XMMatrixTranslation(-20.0f, 0.0f, 80.0f) });
+	// 다리
 
-	// Character (1개)
-	XMVECTOR charInitialPos = { 0.0f, -1.5f, 10.0f };
+	// 다리 1
+	m_SceneInstances.push_back({ 2, XMMatrixScaling(5.0f, 2.0f, 3.0f) * XMMatrixRotationY(XMConvertToRadians(-45.0f)) * XMMatrixTranslation(45.0f, -3.0f, 45.0f) }); // index 2: bridge
+
+	// 다리 2
+	m_SceneInstances.push_back({ 2, XMMatrixScaling(3.0f, 2.0f, 3.0f) * XMMatrixRotationY(XMConvertToRadians(30.0f)) * XMMatrixTranslation(27.0f, -1.5f, 140.0f) });
+
+
+	// 등대 가로등
+
+	// 등대 1
+	m_SceneInstances.push_back({ 1, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(-20.0f, -1.5f, 32.0f) }); // index 1: lighthouse
+
+	// 등대 2
+	m_SceneInstances.push_back({ 1, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(120.0f, -4.0f, 130.0f) });
+
+	//등대 3
+	m_SceneInstances.push_back({ 1, XMMatrixScaling(1.5f, 1.5f, 1.5f) * XMMatrixTranslation(-60.0f, -2.0f, 240.0f) });
+
+	//등대 4
+	m_SceneInstances.push_back({ 1, XMMatrixScaling(4.5f, 4.5f, 4.5f) * XMMatrixTranslation(40.0f, -6.0f, 480.0f) });
+
+	//등대 5
+	m_SceneInstances.push_back({ 1, XMMatrixScaling(1.5f, 1.5f, 1.5f) * XMMatrixTranslation(10.0f, -4.0f, 600.0f) });
+
+	// 가로등
+	m_SceneInstances.push_back({ 4, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(-10.0f, -1.0f, 24.0f) }); // index 4: streetlight
+	m_SceneInstances.push_back({ 4, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(15.0f, -1.5f, 27.0f) });
+
+
+	// --- 캐릭터와 보트의 자연스러운 배치 ---
+
+	// [캐릭터] 왼쪽 앞 섬(섬 2)의 다리 입구에 서서 중앙 섬을 바라보는 구도.
+	XMVECTOR charInitialPos = { -28.0f, -1.5f, 18.0f };
 	m_SceneInstances.push_back({
 		6,
-		XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixRotationY(XMConvertToRadians(180.0f)) * XMMatrixTranslationFromVector(charInitialPos),
-		false, // 보트처럼 움직이지 않음
+		XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(XMConvertToRadians(45.0f)) * XMMatrixTranslationFromVector(charInitialPos),
+		false,
 		charInitialPos
-		});
+		}); // index 6: char (스케일은 작게 유지)
+
+	// [움직이는 보트] 섬들 사이를 항해하는 모습.
+	XMVECTOR boatInitialPos = { -10.0f, -3.0f, 45.0f };
+	m_SceneInstances.push_back({ 3, XMMatrixScaling(0.8f, 0.8f, 0.8f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslationFromVector(boatInitialPos), true, boatInitialPos }); // index 3: boat
+
+	// [정박한 보트] 중앙 섬(섬 1) 근처에 정박한 모습.
+	m_SceneInstances.push_back({ 3, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixRotationY(XMConvertToRadians(100.0f)) * XMMatrixTranslation(40.0f, -5.0f, 80.0f) });
+
+	// [배경용 floor] 바다 역할을 할 기본 바닥. 매우 넓게 깔아줍니다.
+	m_SceneInstances.push_back({ 0, XMMatrixScaling(5.0f, 1.0f, 5.0f) * XMMatrixTranslation(0.0f, -6.0f, 0.0f) }); // index 0: floor
 
 
 	// --- 광원 객체 초기화 ---
 	m_Lights.resize(4);
 	m_Lights[0] = new LightClass; 
-	m_Lights[0]->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f); m_Lights[0]->SetPosition(-10.0f, 8.0f, 15.0f);
+	m_Lights[0]->SetDiffuseColor(10.0f, 0.0f, 0.0f, 1.0f); m_Lights[0]->SetPosition(-10.0f, 3.0f, 10.0f);
 	
 	m_Lights[1] = new LightClass; 
-	m_Lights[1]->SetDiffuseColor(1.0f, 0.5f, 0.0f, 1.0f); m_Lights[1]->SetPosition(10.0f, 8.0f, 35.0f);
+	m_Lights[1]->SetDiffuseColor(0.0f, 10.0f, 0.0f, 1.0f); m_Lights[1]->SetPosition(0.0f, 3.0f, 10.0f);
 	
 	m_Lights[2] = new LightClass; 
-	m_Lights[2]->SetDiffuseColor(0.5f, 0.5f, 1.0f, 1.0f); m_Lights[2]->SetPosition(-10.0f, 8.0f, 75.0f);
+	m_Lights[2]->SetDiffuseColor(0.0f, 0.0f, 10.0f, 1.0f); m_Lights[2]->SetPosition(10.0f, 3.0f, 10.0f);
 	
 	m_Lights[3] = new LightClass; 
-	m_Lights[3]->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f); m_Lights[3]->SetPosition(5.0f, 20.0f, 5.0f);
+	m_Lights[3]->SetDiffuseColor(10.0f, 10.0f, 10.0f, 1.0f); m_Lights[3]->SetPosition(20.0f, 3.0f, 10.0f);
 
 	// --- UI 객체 초기화 ---
 	m_Bitmap = new BitmapClass;
