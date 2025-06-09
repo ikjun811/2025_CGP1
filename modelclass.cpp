@@ -12,6 +12,7 @@ ModelClass::ModelClass()
 	m_indexBuffer = nullptr;
 	m_Texture = nullptr;
 	m_indexCount = 0;
+	m_shaderType = ShaderType::Default;
 }
 
 
@@ -35,85 +36,97 @@ bool ModelClass::Initialize(ID3D11Device* device, const WCHAR* modelFilename, co
 	const aiScene* pScene = importer.ReadFile(filename_str,
 		aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
 
-	if (!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode)
-	{
-		return false;
+	if (!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode) {
+		// Assimp 로딩 실패 시, OBJ 로더 시도
+		if (!LoadModelFromObj(modelFilename)) return false;
 	}
+	else {
+		// Assimp 로딩 성공
+		aiMatrix4x4 t = pScene->mRootNode->mTransformation;
+		m_rootNodeTransform = XMMATRIX(t.a1, t.a2, t.a3, t.a4, t.b1, t.b2, t.b3, t.b4, t.c1, t.c2, t.c3, t.c4, t.d1, t.d2, t.d3, t.d4);
 
-	aiMatrix4x4 t = pScene->mRootNode->mTransformation;
-	m_rootNodeTransform = XMMATRIX(
-		t.a1, t.a2, t.a3, t.a4,
-		t.b1, t.b2, t.b3, t.b4,
-		t.c1, t.c2, t.c3, t.c4,
-		t.d1, t.d2, t.d3, t.d4
-	);
-
-
-
-	// 1. 모델 데이터 로드 
-	for (unsigned int i = 0; i < pScene->mNumMeshes; ++i)
-	{
-		ProcessMesh(pScene->mMeshes[i], pScene);
-	}
-	ReadNodeHierarchy(pScene->mRootNode, m_skeletonRoot);
-	m_finalBoneTransforms.resize(m_boneCounter, XMMatrixIdentity());
-
-
-	// 2. 텍스처 로드
-	if (textureFilename) // 외부 텍스처 파일이 주어지면 그것을 사용
-	{
-		if (!LoadTexture(device, textureFilename)) return false;
-	}
-	else // 외부 파일이 없으면 내장 텍스처 로드를 시도
-	{
-		if (!LoadEmbeddedTexture(device, pScene))
-		{
-			// 내장 텍스처도 없으면 실패 처리 (또는 기본 텍스처 사용)
-			// return false; 
-			// 일단은 텍스처 없이 진행하도록 둘 수 있음
+		for (unsigned int i = 0; i < pScene->mNumMeshes; ++i) {
+			ProcessMesh(pScene->mMeshes[i], pScene);
 		}
+		ReadNodeHierarchy(pScene->mRootNode, m_skeletonRoot);
+		m_finalBoneTransforms.resize(m_boneCounter, XMMatrixIdentity());
 	}
 
-	// 3. 정점/인덱스 버퍼 생성
-	if (!InitializeBuffers(device))
-	{
-		return false;
+	// 텍스처 로드
+	if (textureFilename) {
+		if (!LoadSingleTexture(device, textureFilename)) return false;
 	}
+	else if (pScene) {
+		LoadEmbeddedTexture(device, pScene);
+	}
+
+	// 셰이더 타입 결정
+	if (HasAnimation()) {
+		m_shaderType = ShaderType::Animated;
+	}
+	else {
+		m_shaderType = ShaderType::Default;
+	}
+
+	if (!InitializeBuffers(device)) return false;
 
 	return true;
 
 }
 
 
+bool ModelClass::Initialize(ID3D11Device* device, const WCHAR* modelFilename, const vector<wstring>& textureFilenames)
+{
+	Assimp::Importer importer;
+	std::wstring ws(modelFilename);
+	std::string filename_str(ws.begin(), ws.end());
+
+	const aiScene* pScene = importer.ReadFile(filename_str,
+		aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
+
+	if (!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !pScene->mRootNode) return false;
+
+	for (unsigned int i = 0; i < pScene->mNumMeshes; ++i) {
+		ProcessMesh(pScene->mMeshes[i], pScene);
+	}
+
+	// 다중 텍스처 로드
+	if (!LoadMultipleTextures(device, textureFilenames)) return false;
+
+	// 셰이더 타입 PBR로 고정
+	m_shaderType = ShaderType::PBR;
+
+	if (!InitializeBuffers(device)) return false;
+
+	return true;
+}
+
 void ModelClass::Shutdown()
 {
-	ReleaseTexture();
+	ReleaseTextures();
 	ShutdownBuffers();
+
 }
 
-
-void ModelClass::Render(ID3D11DeviceContext* deviceContext)
-{
-	RenderBuffers(deviceContext);
-}
-
-
-int ModelClass::GetIndexCount()
-{
-	return m_indexCount;
-}
-
-
+void ModelClass::Render(ID3D11DeviceContext* deviceContext) { RenderBuffers(deviceContext); }
+int ModelClass::GetIndexCount() { return m_indexCount; }
 
 ID3D11ShaderResourceView* ModelClass::GetTexture()
 {
-	if (m_Texture)
-	{
-		return m_Texture->GetTexture();
-	}
-	return nullptr;
+	return m_Texture ? m_Texture->GetTexture() : nullptr;
 }
 
+const vector<ID3D11ShaderResourceView*>& ModelClass::GetTextures() const
+{
+	return m_Textures;
+}
+
+ModelClass::ShaderType ModelClass::GetShaderType() const { return m_shaderType; }
+
+bool ModelClass::HasAnimation() const {
+	// 뼈 정보가 있거나, 애니메이션 클립이 로드되었으면 true
+	return m_boneCounter > 0 || !m_animations.empty();
+}
 
 bool ModelClass::InitializeBuffers(ID3D11Device* device)
 {
@@ -174,21 +187,47 @@ void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 }
 
 
-bool ModelClass::LoadTexture(ID3D11Device* device, const WCHAR* filename)
+bool ModelClass::LoadSingleTexture(ID3D11Device* device, const WCHAR* filename)
 {
+	ReleaseTextures();
 	m_Texture = new TextureClass;
 	if (!m_Texture) return false;
 	return m_Texture->Initialize(device, filename);
 }
 
-void ModelClass::ReleaseTexture()
+bool ModelClass::LoadMultipleTextures(ID3D11Device* device, const vector<wstring>& filenames)
 {
-	if (m_Texture)
+	ReleaseTextures();
+	for (const auto& file : filenames)
 	{
+		auto texture = new TextureClass();
+		if (!texture || !texture->Initialize(device, file.c_str()))
+		{
+			// 실패 시 생성된 텍스처들 해제
+			ReleaseTextures();
+			return false;
+		}
+		m_TextureList.push_back(texture);
+		m_Textures.push_back(texture->GetTexture());
+	}
+	return true;
+}
+
+void ModelClass::ReleaseTextures()
+{
+	if (m_Texture) {
 		m_Texture->Shutdown();
 		delete m_Texture;
 		m_Texture = nullptr;
 	}
+	for (auto tex : m_TextureList) {
+		if (tex) {
+			tex->Shutdown();
+			delete tex;
+		}
+	}
+	m_TextureList.clear();
+	m_Textures.clear(); // 뷰 포인터 벡터도 클리어
 }
  /*bool ModelClass::LoadModel(const WCHAR* filename)
 {
@@ -294,6 +333,16 @@ void ModelClass::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 			vertex.TexCoord = XMFLOAT2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
 		else
 			vertex.TexCoord = XMFLOAT2(0.0f, 0.0f);
+
+		if (mesh->HasTangentsAndBitangents())
+		{
+			vertex.Tangent = XMFLOAT3(mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z);
+		}
+		else
+		{
+			vertex.Tangent = XMFLOAT3(0.0f, 0.0f, 0.0f); // 탄젠트 정보가 없는 경우
+		}
+
 
 		m_vertices.push_back(vertex);
 	}
@@ -745,4 +794,9 @@ bool ModelClass::LoadEmbeddedTexture(ID3D11Device* device, const aiScene* scene)
 	// TODO: 압축되지 않은 ARGB 데이터에 대한 처리 (필요 시 구현)
 
 	return false;
+}
+
+const vector<XMMATRIX>& ModelClass::GetFinalBoneTransforms() const
+{
+	return m_finalBoneTransforms;
 }

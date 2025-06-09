@@ -59,6 +59,7 @@ struct VertexInputType // 애니메이션 지원
     float4 position : POSITION;
     float2 tex : TEXCOORD0;
     float3 normal : NORMAL;
+    float3 tangent : TANGENT;
     uint4 boneIDs : BONEIDS0;
     float4 weights : WEIGHTS0;
 };

@@ -10,6 +10,7 @@ GraphicsClass::GraphicsClass()
 	m_TextureShader = nullptr;
 	m_LightShader = nullptr;
 	m_StaticShader = nullptr;
+	m_PBRShader = nullptr;
 	m_Bitmap = nullptr;
 	m_Text = nullptr;
 
@@ -53,23 +54,43 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_StaticShader = new StaticShaderClass;
 	if (!m_StaticShader || !m_StaticShader->Initialize(m_D3D->GetDevice(), hwnd)) return false;
 
-	auto loadModel = [&](const wchar_t* modelFile, const wchar_t* textureFile = nullptr) -> bool {
-		auto model = std::make_unique<ModelClass>();
-		// Initialize 함수는 이미 textureFilename이 nullptr일 경우를 처리하도록 수정되었으므로 완벽하게 호환됩니다.
-		if (!model->Initialize(m_D3D->GetDevice(), modelFile, textureFile)) {
-			return false;
-		}
-		m_Models.push_back(std::move(model));
+	m_PBRShader = new PBRShaderClass;
+	if (!m_PBRShader || !m_PBRShader->Initialize(m_D3D->GetDevice(), hwnd)) return false;
+
+	// 단일 텍스처 로드 람다 (기존)
+	auto loadModelSingle = [&](const wchar_t* modelFile, const wchar_t* textureFile = nullptr) -> bool {
+		auto model = make_unique<ModelClass>();
+		if (!model->Initialize(m_D3D->GetDevice(), modelFile, textureFile)) return false;
+		m_Models.push_back(move(model));
 		return true;
 		};
 
-	if (!loadModel(L"./data/floor.obj", L"./data/floor.dds")) return false;         // index 0: floor
-	if (!loadModel(L"./data/Lighthouse.obj", L"./data/Lighthouse.dds")) return false; // index 1: lighthouse
-	if (!loadModel(L"./data/Bridge.obj", L"./data/Bridge.dds")) return false;       // index 2: bridge
-	if (!loadModel(L"./data/Boat.obj", L"./data/Boat.dds")) return false;           // index 3: boat
-	if (!loadModel(L"./data/streetlight.obj", L"./data/streetlight.dds")) return false; // index 4: streetlight
-	if (!loadModel(L"./data/Rock.obj", L"./data/Rock.dds")) return false;           // index 5: rock
-	if (!loadModel(L"./data/male.fbx")) return false; // index 6 char
+	// 다중 텍스처 로드 람다 (새로 추가)
+	auto loadModelMulti = [&](const wchar_t* modelFile, const vector<wstring>& textureFiles) -> bool {
+		auto model = make_unique<ModelClass>();
+		if (!model->Initialize(m_D3D->GetDevice(), modelFile, textureFiles)) return false;
+		m_Models.push_back(move(model));
+		return true;
+		};
+
+
+	if (!loadModelSingle(L"./data/floor.obj", L"./data/floor.dds")) return false; // index 0        // index 0: floor
+
+	vector<wstring> lighthouseTextures = {
+	  L"./data/Lighthouse_Albedo.dds", // t0: Diffuse
+	  L"./data/Lighthouse_Normal.dds", // t1: Normal
+	  L"./data/Lighthouse_Roughness.dds", // t2: Specular/Roughness
+	  L"./data/Lighthouse_Emissive.dds", // t3: Emissive
+	  L"./data/Lighthouse_AO.dds" // t4: Ambient Occlusion
+	};
+	if (!loadModelMulti(L"./data/Lighthouse.obj", lighthouseTextures)) return false;
+	int lighthouseModelIndex = m_Models.size() - 1; // 등대 모델 인덱스 저장
+
+	if (!loadModelSingle(L"./data/Bridge.obj", L"./data/Bridge.dds")) return false;       // index 2: bridge
+	if (!loadModelSingle(L"./data/Boat.obj", L"./data/Boat.dds")) return false;           // index 3: boat
+	if (!loadModelSingle(L"./data/streetlight.obj", L"./data/streetlight.dds")) return false; // index 4: streetlight
+	if (!loadModelSingle(L"./data/Rock.obj", L"./data/Rock.dds")) return false;           // index 5: rock
+	if (!loadModelSingle(L"./data/male.fbx")) return false; // index 6 char
 	//if (!loadModel(L"./data/character.fbx")) return false;
 
 	/*	m_Models[6]->LoadAnimation(L"./data/male_idle1_200f.fbx", "idle");
@@ -86,7 +107,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 
 	// --- 2. 씬에 객체 인스턴스 배치 ---
-	 m_SceneInstances.clear();
+	m_SceneInstances.clear();
 
 	// 로드된 모델(인덱스)을 사용하여 씬에 여러 개의 인스턴스를 배치합니다.
 
@@ -115,19 +136,19 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// 등대 가로등
 
 	// 등대 1
-	m_SceneInstances.push_back({ 1, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(-20.0f, -1.5f, 32.0f) }); // index 1: lighthouse
+	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(-20.0f, -1.5f, 32.0f) }); // index 1: lighthouse
 
 	// 등대 2
-	m_SceneInstances.push_back({ 1, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(120.0f, -4.0f, 130.0f) });
+	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(120.0f, -4.0f, 130.0f) });
 
 	//등대 3
-	m_SceneInstances.push_back({ 1, XMMatrixScaling(1.5f, 1.5f, 1.5f) * XMMatrixTranslation(-60.0f, -2.0f, 240.0f) });
+	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.5f, 1.5f, 1.5f) * XMMatrixTranslation(-60.0f, -2.0f, 240.0f) });
 
 	//등대 4
-	m_SceneInstances.push_back({ 1, XMMatrixScaling(4.5f, 4.5f, 4.5f) * XMMatrixTranslation(40.0f, -6.0f, 480.0f) });
+	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(4.5f, 4.5f, 4.5f) * XMMatrixTranslation(40.0f, -6.0f, 480.0f) });
 
 	//등대 5
-	m_SceneInstances.push_back({ 1, XMMatrixScaling(1.5f, 1.5f, 1.5f) * XMMatrixTranslation(10.0f, -4.0f, 600.0f) });
+	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.5f, 1.5f, 1.5f) * XMMatrixTranslation(10.0f, -4.0f, 600.0f) });
 
 	// 가로등
 	m_SceneInstances.push_back({ 4, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(-10.0f, -2.3f, 24.0f) }); // index 4: streetlight
@@ -227,6 +248,8 @@ void GraphicsClass::Shutdown()
 	m_Models.clear(); // unique_ptr가 모든 ModelClass 메모리 자동 해제
 	m_SceneInstances.clear();
 	if (m_D3D) { m_D3D->Shutdown(); delete m_D3D; m_D3D = nullptr; }
+	if (m_PBRShader) { m_PBRShader->Shutdown(); delete m_PBRShader; m_PBRShader = nullptr; }
+	if (m_StaticShader) { m_StaticShader->Shutdown(); delete m_StaticShader; m_StaticShader = nullptr; }
 }
 
 
@@ -322,32 +345,31 @@ bool GraphicsClass::Render(CameraClass* gameCamera)
 	{
 		ModelClass* model = m_Models[instance.modelIndex].get();
 		model->Render(m_D3D->GetDeviceContext());
-
 		XMMATRIX finalWorldMatrix = instance.worldTransform;
 
-
-
-	
-		if (instance.modelIndex == 6) // 캐릭터 모델인 경우
+		switch (model->GetShaderType())
 		{
-			// XMMATRIX finalWorldMatrix = instance.worldTransform; // 이 줄은 중복이므로 제거 가능
+		case ModelClass::ShaderType::PBR:
+			m_PBRShader->Render(m_D3D->GetDeviceContext(), model->GetIndexCount(),
+				finalWorldMatrix, viewMatrix, projectionMatrix,
+				model->GetTextures(), // 다중 텍스처 전달
+				m_Lights, gameCamera);
+			break;
 
+		case ModelClass::ShaderType::Animated:
 			m_LightShader->Render(m_D3D->GetDeviceContext(), model->GetIndexCount(),
-				finalWorldMatrix,
-				viewMatrix,
-				projectionMatrix,
-				model->GetTexture(),
-				m_Lights,
-				model->GetFinalBoneTransforms(),
-				gameCamera);
-		}
-		else // 그 외 모든 정적 모델
-		{
+				finalWorldMatrix, viewMatrix, projectionMatrix,
+				model->GetTexture(), // 단일 텍스처 전달
+				m_Lights, model->GetFinalBoneTransforms(), gameCamera);
+			break;
+
+		case ModelClass::ShaderType::Default:
+		default:
 			m_StaticShader->Render(m_D3D->GetDeviceContext(), model->GetIndexCount(),
 				finalWorldMatrix, viewMatrix, projectionMatrix,
-				model->GetTexture(),
-				m_Lights,
-				gameCamera);
+				model->GetTexture(), // 단일 텍스처 전달
+				m_Lights, gameCamera);
+			break;
 		}
 	}
 

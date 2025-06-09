@@ -13,6 +13,7 @@
 #include "modelclass.h"
 #include "lightshaderclass.h"
 #include "staticshaderclass.h"
+#include "pbrshaderclass.h"
 #include "lightclass.h"
 #include "textureshaderclass.h"
 #include "bitmapclass.h"
@@ -21,6 +22,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+
 
 /////////////
 // GLOBALS //
@@ -81,6 +83,7 @@ private:
 	TextureShaderClass* m_TextureShader;
 	LightShaderClass* m_LightShader;     // 애니메이션 모델용
 	StaticShaderClass* m_StaticShader;   // 정적 모델용
+	PBRShaderClass* m_PBRShader;
 
 	// UI 객체들
 	BitmapClass* m_Bitmap;

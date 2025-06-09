@@ -147,6 +147,7 @@
     <ClInclude Include="lightclass.h" />
     <ClInclude Include="lightshaderclass.h" />
     <ClInclude Include="modelclass.h" />
+    <ClInclude Include="pbrshaderclass.h" />
     <ClInclude Include="StaticShaderClass.h" />
     <ClInclude Include="systemclass.h" />
     <ClInclude Include="textclass.h" />
@@ -169,6 +170,7 @@
     <ClCompile Include="lightshaderclass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="modelclass.cpp" />
+    <ClCompile Include="pbrshaderclass.cpp" />
     <ClCompile Include="StaticShaderClass.cpp" />
     <ClCompile Include="systemclass.cpp" />
     <ClCompile Include="textclass.cpp" />
@@ -189,6 +191,9 @@
     <Text Include="data\fontdata.txt" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="data\pbrShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="data\phongLightShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
