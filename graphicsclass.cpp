@@ -84,7 +84,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	  L"./data/Lighthouse_AO.dds" // t4: Ambient Occlusion
 	};
 	if (!loadModelMulti(L"./data/Lighthouse.obj", lighthouseTextures)) return false;
-	int lighthouseModelIndex = m_Models.size() - 1; // 등대 모델 인덱스 저장
+	int lighthouseModelIndex = m_Models.size() - 1; // 등대 모델 인덱스 1 저장
 
 	if (!loadModelSingle(L"./data/Bridge.obj", L"./data/Bridge.dds")) return false;       // index 2: bridge
 	if (!loadModelSingle(L"./data/Boat.obj", L"./data/Boat.dds")) return false;           // index 3: boat
@@ -92,6 +92,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	if (!loadModelSingle(L"./data/Rock.obj", L"./data/Rock.dds")) return false;           // index 5: rock
 	if (!loadModelSingle(L"./data/male.fbx")) return false; // index 6 char
 	//if (!loadModel(L"./data/character.fbx")) return false;
+	if (!loadModelSingle(L"./data/Mountain.obj", L"./data/Mountain.dds")) return false; // index 7 island
+
 
 	/*	m_Models[6]->LoadAnimation(L"./data/male_idle1_200f.fbx", "idle");
 	m_Models[6]->LoadAnimation(L"./data/male_running_20f.fbx", "running");
@@ -155,6 +157,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_SceneInstances.push_back({ 4, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(15.0f, -2.3f, 27.0f) });
 
 
+	//대형 섬
+	m_SceneInstances.push_back({ 7, XMMatrixScaling(200.0f, 150.0f, 200.0f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslation(100.0f, -6.0f, -150.0f) });
+
 	// --- 캐릭터와 보트의 자연스러운 배치 ---
 
 	// [캐릭터] -20.0f, -1.8f, 150.0f
@@ -200,7 +205,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		});
 
 	// [배경용 floor] 바다 역할을 할 기본 바닥. 매우 넓게 깔아줍니다.
-	m_SceneInstances.push_back({ 0, XMMatrixScaling(5.0f, 1.0f, 5.0f) * XMMatrixTranslation(0.0f, -6.0f, 0.0f) }); // index 0: floor
+	m_SceneInstances.push_back({ 0, XMMatrixScaling(5.0f, 1.0f, 5.0f) * XMMatrixTranslation(0.0f, -6.2f, 0.0f) }); // index 0: floor
 
 
 	// --- 광원 객체 초기화 ---
@@ -210,7 +215,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// 1. 전역 방향성 조명 (달빛처럼 약간 위에서 비스듬히)
 	m_Lights[0] = new LightClass();
 	m_Lights[0]->SetLightType(LightType::Directional);
-	m_Lights[0]->SetDirection(0.5f, -0.7f, 0.5f); // 비스듬한 방향
+	m_Lights[0]->SetDirection(-0.5f, -0.7f, -0.5f); // 비스듬한 방향
 	m_Lights[0]->SetDiffuseColor(0.8f, 0.8f, 1.0f, 1.0f); // 약한 푸른빛
 	m_Lights[0]->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
 	m_Lights[0]->SetSpecularPower(64.0f);

@@ -1,0 +1,44 @@
+newmtl Solid
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+Ns 0.0
+illum 0
+
+newmtl Rapanui_beach_April2021_LOWPOLY
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+Ns 0.0
+illum 0
+map_Kd Rapanui_beach_April2021_LOWPOLY.jpg
+
+newmtl Rapanui_beach_April2021_LOWPOLY1
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+Ns 0.0
+illum 0
+map_Kd Rapanui_beach_April2021_LOWPOLY1.jpg
+
+newmtl Rapanui_beach_April2021_LOWPOLY2
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+Ns 0.0
+illum 0
+map_Kd Rapanui_beach_April2021_LOWPOLY2.jpg
+
+newmtl Rapanui_beach_April2021_LOWPOLY3
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+Ns 0.0
+illum 0
+map_Kd Rapanui_beach_April2021_LOWPOLY3.jpg
+

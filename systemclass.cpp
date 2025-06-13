@@ -147,6 +147,12 @@ void SystemClass::Shutdown()
 		m_Cpu = 0;
 	}
 
+	if (m_Camera)
+	{
+		delete m_Camera;
+		m_Camera = 0;
+	}
+
 	// Release the fps object.
 	if (m_Fps)
 	{
