@@ -30,6 +30,9 @@ public:
 	void KeyUp(unsigned int);
 	bool IsKeyDown(unsigned int) const;
 
+	bool IsMouseButtonDown(int button) const;
+	bool IsMouseButtonPressed(int button) const;
+
 	void GetMouseLocation(int&, int&) const; // 현재 마우스 커서 위치 (화면 좌표, 필요하다면)
 	void GetMouseDelta(long&, long&) const;   // 이전 프레임 대비 마우스 이동량
 

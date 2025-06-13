@@ -50,6 +50,15 @@ struct SceneObjectInstance
 	float animationOffset = 0.0f;
 };
 
+struct BulletInstance
+{
+	XMMATRIX worldTransform;
+	XMFLOAT3 position;
+	XMFLOAT3 direction;
+	float speed;
+	float lifeTime; // 총알이 살아있을 시간 (초)
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +71,7 @@ public:
 
 	bool Initialize(int screenWidth, int screenHeight, HWND hwnd);
 	void Shutdown();
-	bool Frame(int fps, int cpu, CameraClass* gameCamera, float deltaTime);
+	bool Frame(int fps, int cpu, CameraClass* gameCamera, InputClass* input, float deltaTime);
 
 
 private:
@@ -84,6 +93,8 @@ private:
 	std::vector<std::unique_ptr<ModelClass>> m_Models;
 	// 씬에 배치될 객체 인스턴스들의 목록
 	std::vector<SceneObjectInstance> m_SceneInstances;
+	std::vector<BulletInstance> m_Bullets; // <<-- 총알 목록 추가
+	int m_bulletModelIndex = -1;
 
 	// 셰이더 객체들
 	TextureShaderClass* m_TextureShader;

@@ -93,6 +93,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	if (!loadModelSingle(L"./data/male.fbx")) return false; // index 6 char
 	//if (!loadModel(L"./data/character.fbx")) return false;
 	if (!loadModelSingle(L"./data/Mountain.obj", L"./data/Mountain.dds")) return false; // index 7 island
+	if (!loadModelSingle(L"./data/Bullet.fbx")) return false;
+	m_bulletModelIndex = m_Models.size() - 1; // index 8 총알
 
 
 	/*	m_Models[6]->LoadAnimation(L"./data/male_idle1_200f.fbx", "idle");
@@ -285,7 +287,7 @@ void GraphicsClass::Shutdown()
 
 
 
-bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, float deltaTime)
+bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, InputClass* input, float deltaTime)
 {
 
 	//카메라(나) 위치
@@ -361,6 +363,78 @@ bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, float delta
 				* XMMatrixRotationY(instance.currentYRotation)
 				* XMMatrixTranslation(instance.currentPosition.x, instance.currentPosition.y, instance.currentPosition.z);
 		}
+
+		//총알 발사
+		if (input->IsMouseButtonPressed(0))
+		{
+			BulletInstance newBullet;
+			newBullet.position = gameCamera->GetPosition();
+
+			// <<-- 새로운 방식으로 방향 벡터 가져오기 -->>
+			XMFLOAT3 forward, right, up;
+			gameCamera->GetDirectionVectors(forward, right, up);
+			newBullet.direction = forward; // 카메라의 현재 전방 벡터를 총알 방향으로 설정
+
+			newBullet.speed = 3.0f;
+			newBullet.lifeTime = 20.0f;
+
+			m_Bullets.push_back(newBullet);
+		}
+
+		//총알 이동, 생존
+		for (auto& bullet : m_Bullets)
+		{
+			// 위치 이동
+			XMVECTOR pos = XMLoadFloat3(&bullet.position);
+			XMVECTOR dir = XMLoadFloat3(&bullet.direction);
+			pos += dir * bullet.speed * deltaTime;
+			XMStoreFloat3(&bullet.position, pos);
+
+			// 생존 시간 감소
+			bullet.lifeTime -= deltaTime;
+
+			// --- 월드 행렬 업데이트 (이 부분을 수정) ---
+
+			// 1. 기본 전방 벡터 (모델이 기본적으로 바라보는 방향, 보통 Z+)
+			XMVECTOR defaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+
+			// 2. 실제 진행 방향 벡터 (이미 dir에 있음)
+			// 3. 두 벡터 사이의 회전을 나타내는 회전축과 회전각 계산
+			//    (더 간단한 방법은 LookTo 행렬을 사용하는 것)
+
+			// <<-- 더 쉽고 안정적인 방법: LookTo 행렬 생성 -->>
+			XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+			// 진행 방향(dir)과 up 벡터가 거의 평행할 경우(총알이 수직으로 날아갈 때),
+			// up 벡터를 약간 다른 방향으로 틀어줘야 행렬 계산이 깨지지 않습니다.
+			if (XMVector3Equal(XMVector3Normalize(dir), XMVector3Normalize(up)) || XMVector3Equal(XMVector3Normalize(dir), -XMVector3Normalize(up)))
+			{
+				up = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f); // up을 x축으로 변경
+			}
+
+			// LookToLH: 특정 '방향'을 바라보는 변환 행렬을 만듭니다.
+			// XMMatrixLookAtLH는 특정 '지점'을 바라보는 행렬을 만듭니다.
+			XMMATRIX rotationMatrix = XMMatrixLookToLH(
+				XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f), // 회전의 중심은 원점
+				dir,                                 // 바라볼 방향
+				up                                   // 상향 벡터
+			);
+
+			// LookTo 행렬은 뷰 행렬처럼 역행렬이므로, 모델에 적용하려면 다시 역행렬을 취해야 합니다.
+			rotationMatrix = XMMatrixInverse(nullptr, rotationMatrix);
+
+			// 최종 월드 행렬: 크기 -> 회전 -> 위치 순서로 적용
+			bullet.worldTransform = XMMatrixScaling(0.1f, 0.1f, 0.1f) * rotationMatrix * XMMatrixTranslationFromVector(pos);
+		}
+
+		// 수명이 다한 총알 제거
+		m_Bullets.erase(
+			std::remove_if(m_Bullets.begin(), m_Bullets.end(), [](const BulletInstance& b) {
+				return b.lifeTime <= 0.0f;
+				}),
+			m_Bullets.end()
+		);
+
 	}
 
 
@@ -452,6 +526,19 @@ bool GraphicsClass::Render(CameraClass* gameCamera)
 				m_Lights, gameCamera);
 			break;
 		}
+	}
+
+	//총알
+	ModelClass* bulletModel = m_Models[m_bulletModelIndex].get();
+	bulletModel->Render(m_D3D->GetDeviceContext());
+
+	for (const auto& bullet : m_Bullets)
+	{
+		// 총알은 애니메이션이 없으므로 StaticShader 사용
+		m_StaticShader->Render(m_D3D->GetDeviceContext(), bulletModel->GetIndexCount(),
+			bullet.worldTransform, viewMatrix, projectionMatrix,
+			bulletModel->GetTexture(),
+			m_Lights, gameCamera);
 	}
 
 	// 4. 2D UI 렌더링 (Z-버퍼 끄기)

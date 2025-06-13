@@ -35,6 +35,8 @@ public:
 	void Render();
 	void GetViewMatrix(XMMATRIX&) const;
 
+	void GetDirectionVectors(XMFLOAT3& forward, XMFLOAT3& right, XMFLOAT3& up);
+
 	void HandleMovement(const InputClass& input, float frameTime);
 
 private:

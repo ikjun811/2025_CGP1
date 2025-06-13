@@ -220,6 +220,8 @@ bool InputClass::ReadMouse()
 {
 	HRESULT result;
 
+	m_lastMouseState = m_mouseState;
+
 	// 마우스 장치 상태 읽기
 	result = m_mouse->GetDeviceState(sizeof(DIMOUSESTATE), (LPVOID)&m_mouseState);
 	if (FAILED(result))
@@ -244,4 +246,25 @@ bool InputClass::ReadMouse()
 
 
 	return true;
+}
+
+bool InputClass::IsMouseButtonDown(int button) const
+{
+	// m_mouseState.rgbButtons 배열은 마우스 버튼 상태를 담고 있습니다.
+	// button 0: 좌클릭, 1: 우클릭, 2: 휠클릭
+	if (button < 0 || button > 3) return false;
+
+	// 0x80 비트가 켜져 있으면 버튼이 눌린 상태입니다.
+	return (m_mouseState.rgbButtons[button] & 0x80) ? true : false;
+}
+
+bool InputClass::IsMouseButtonPressed(int button) const
+{
+	if (button < 0 || button > 3) return false;
+
+	// 현재는 눌려있고(true), 이전 프레임에는 안 눌려있었다면(false) -> "눌리는 순간"
+	bool current_state = (m_mouseState.rgbButtons[button] & 0x80);
+	bool last_state = (m_lastMouseState.rgbButtons[button] & 0x80);
+
+	return current_state && !last_state;
 }

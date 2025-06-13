@@ -146,3 +146,27 @@ void CameraClass::HandleMovement(const InputClass& input, float frameTime)
 	// 카메라 위치가 변경되었으므로 Render()를 호출하여 뷰 행렬을 다시 계산해야 함
 	// 또는, 이 함수가 Camera::Render() 전에 호출된다면 Render()에서 자동으로 반영됨
 }
+
+void CameraClass::GetDirectionVectors(XMFLOAT3& forward, XMFLOAT3& right, XMFLOAT3& up)
+{
+	// Render() 함수와 동일한 방식으로 회전 행렬을 먼저 계산합니다.
+	float pitch = m_rotation.x * 0.0174532925f;
+	float yaw = m_rotation.y * 0.0174532925f;
+	float roll = m_rotation.z * 0.0174532925f;
+	XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+
+	// 기본 방향 벡터들
+	XMVECTOR defaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	XMVECTOR defaultRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR defaultUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	// 회전 행렬을 적용하여 현재 카메라의 방향 벡터들을 계산
+	XMVECTOR lookDirection = XMVector3TransformCoord(defaultForward, rotationMatrix);
+	XMVECTOR rightDirection = XMVector3TransformCoord(defaultRight, rotationMatrix);
+	XMVECTOR upDirection = XMVector3TransformCoord(defaultUp, rotationMatrix);
+
+	// 결과를 XMFLOAT3로 저장하여 반환
+	XMStoreFloat3(&forward, lookDirection);
+	XMStoreFloat3(&right, rightDirection);
+	XMStoreFloat3(&up, upDirection);
+}
