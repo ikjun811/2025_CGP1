@@ -74,27 +74,23 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		};
 
 
-	if (!loadModelSingle(L"./data/floor.obj", L"./data/floor.dds")) return false; // index 0        // index 0: floor
+	if (!loadModelSingle(L"./data/floor.obj", L"./data/floor.dds")) return false; // index 0: floor
 
 	vector<wstring> lighthouseTextures = {
-	  L"./data/Lighthouse_Albedo.dds", // t0: Diffuse
-	  L"./data/Lighthouse_Normal.dds", // t1: Normal
-	  L"./data/Lighthouse_Roughness.dds", // t2: Specular/Roughness
-	  L"./data/Lighthouse_Emissive.dds", // t3: Emissive
-	  L"./data/Lighthouse_AO.dds" // t4: Ambient Occlusion
+	  L"./data/Lighthouse_Albedo.dds", L"./data/Lighthouse_Normal.dds", L"./data/Lighthouse_Roughness.dds",
+	  L"./data/Lighthouse_Emissive.dds", L"./data/Lighthouse_AO.dds"
 	};
 	if (!loadModelMulti(L"./data/Lighthouse.obj", lighthouseTextures)) return false;
-	int lighthouseModelIndex = m_Models.size() - 1; // 등대 모델 인덱스 1 저장
+	int lighthouseModelIndex = m_Models.size() - 1; // index 1: lighthouse
 
 	if (!loadModelSingle(L"./data/Bridge.obj", L"./data/Bridge.dds")) return false;       // index 2: bridge
 	if (!loadModelSingle(L"./data/Boat.obj", L"./data/Boat.dds")) return false;           // index 3: boat
 	if (!loadModelSingle(L"./data/streetlight.obj", L"./data/streetlight.dds")) return false; // index 4: streetlight
 	if (!loadModelSingle(L"./data/Rock.obj", L"./data/Rock.dds")) return false;           // index 5: rock
-	if (!loadModelSingle(L"./data/male.fbx")) return false; // index 6 char
-	//if (!loadModel(L"./data/character.fbx")) return false;
-	if (!loadModelSingle(L"./data/Mountain.obj", L"./data/Mountain.dds")) return false; // index 7 island
+	if (!loadModelSingle(L"./data/male.fbx")) return false;                              // index 6: char
+	if (!loadModelSingle(L"./data/Mountain.obj", L"./data/Mountain.dds")) return false; // index 7: island
 	if (!loadModelSingle(L"./data/Bullet.fbx")) return false;
-	m_bulletModelIndex = m_Models.size() - 1; // index 8 총알
+	m_bulletModelIndex = m_Models.size() - 1;                                            // index 8: 총알
 
 
 	/*	m_Models[6]->LoadAnimation(L"./data/male_idle1_200f.fbx", "idle");
@@ -115,99 +111,121 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// 로드된 모델(인덱스)을 사용하여 씬에 여러 개의 인스턴스를 배치합니다.
 
-	// 섬 1]
-	m_SceneInstances.push_back({ 5, XMMatrixScaling(2.0f, 0.3f, 1.5f) * XMMatrixTranslation(0.0f, -5.0f, 0.0f) }); // index 5: rock
+	// 섬 1 (정적)
+	XMFLOAT3 pos_rock1 = { 0.0f, -5.0f, 0.0f };
+	m_SceneInstances.push_back({ 5, XMMatrixScaling(2.0f, 0.3f, 1.5f) * XMMatrixTranslationFromVector(XMLoadFloat3(&pos_rock1)), XMMatrixIdentity(), pos_rock1, 0.f, false, false, false, 0.f, 0.f, false });
 
-	// 섬 2
-	m_SceneInstances.push_back({ 5, XMMatrixScaling(1.5f, 0.3f, 1.0f) * XMMatrixRotationY(XMConvertToRadians(30.0f)) * XMMatrixTranslation(100.0f, -5.0f, 100.0f) });
+	// 섬 2 (정적)
+	XMFLOAT3 pos_rock2 = { 100.0f, -5.0f, 100.0f };
+	m_SceneInstances.push_back({ 5, XMMatrixScaling(1.5f, 0.3f, 1.0f) * XMMatrixRotationY(XMConvertToRadians(30.0f)) * XMMatrixTranslationFromVector(XMLoadFloat3(&pos_rock2)), XMMatrixIdentity(), pos_rock2, 0.f, false, false, false, 0.f, 0.f, false });
 
-	// 섬 3
-	m_SceneInstances.push_back({ 5, XMMatrixScaling(1.0f, 0.3f, 0.8f) * XMMatrixRotationY(XMConvertToRadians(0.0f)) * XMMatrixTranslation(0.0f, -4.0f, 150.0f) });
+	// 섬 3 (정적)
+	XMFLOAT3 pos_rock3 = { 0.0f, -4.0f, 150.0f };
+	m_SceneInstances.push_back({ 5, XMMatrixScaling(1.0f, 0.3f, 0.8f) * XMMatrixRotationY(XMConvertToRadians(0.0f)) * XMMatrixTranslationFromVector(XMLoadFloat3(&pos_rock3)), XMMatrixIdentity(), pos_rock3, 0.f, false, false, false, 0.f, 0.f, false });
 
-	// 섬 4
-	m_SceneInstances.push_back({ 5, XMMatrixScaling(1.0f, 0.4f, 0.8f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslation(-60.0f, -2.0f, 240.0f) });
+	// 섬 4 (정적)
+	XMFLOAT3 pos_rock4 = { -60.0f, -2.0f, 240.0f };
+	m_SceneInstances.push_back({ 5, XMMatrixScaling(1.0f, 0.4f, 0.8f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslationFromVector(XMLoadFloat3(&pos_rock4)), XMMatrixIdentity(), pos_rock4, 0.f, false, false, false, 0.f, 0.f, false });
 
+	// 다리 1 (정적)
+	XMFLOAT3 pos_bridge1 = { 45.0f, -3.0f, 45.0f };
+	m_SceneInstances.push_back({ 2, XMMatrixScaling(5.0f, 2.0f, 3.0f) * XMMatrixRotationY(XMConvertToRadians(-45.0f)) * XMMatrixTranslationFromVector(XMLoadFloat3(&pos_bridge1)), XMMatrixIdentity(), pos_bridge1, 0.f, false, false, false, 0.f, 0.f, false });
 
-	// 다리
+	// 다리 2 (정적)
+	XMFLOAT3 pos_bridge2 = { 27.0f, -1.5f, 140.0f };
+	m_SceneInstances.push_back({ 2, XMMatrixScaling(3.0f, 2.0f, 3.0f) * XMMatrixRotationY(XMConvertToRadians(30.0f)) * XMMatrixTranslationFromVector(XMLoadFloat3(&pos_bridge2)), XMMatrixIdentity(), pos_bridge2, 0.f, false, false, false, 0.f, 0.f, false });
 
-	// 다리 1
-	m_SceneInstances.push_back({ 2, XMMatrixScaling(5.0f, 2.0f, 3.0f) * XMMatrixRotationY(XMConvertToRadians(-45.0f)) * XMMatrixTranslation(45.0f, -3.0f, 45.0f) }); // index 2: bridge
+	// 등대 1 (정적)
+	XMFLOAT3 pos_lh1 = { -20.0f, -2.0f, 32.0f };
+	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslationFromVector(XMLoadFloat3(&pos_lh1)), XMMatrixIdentity(), pos_lh1, 0.f, false, false, false, 0.f, 0.f, false });
 
-	// 다리 2
-	m_SceneInstances.push_back({ 2, XMMatrixScaling(3.0f, 2.0f, 3.0f) * XMMatrixRotationY(XMConvertToRadians(30.0f)) * XMMatrixTranslation(27.0f, -1.5f, 140.0f) });
+	// 등대 2 (정적)
+	XMFLOAT3 pos_lh2 = { 120.0f, -4.0f, 130.0f };
+	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslationFromVector(XMLoadFloat3(&pos_lh2)), XMMatrixIdentity(), pos_lh2, 0.f, false, false, false, 0.f, 0.f, false });
 
+	// 등대 3 (정적)
+	XMFLOAT3 pos_lh3 = { -60.0f, -2.0f, 240.0f };
+	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.5f, 1.5f, 1.5f) * XMMatrixTranslationFromVector(XMLoadFloat3(&pos_lh3)), XMMatrixIdentity(), pos_lh3, 0.f, false, false, false, 0.f, 0.f, false });
 
-	// 등대 가로등
+	// 등대 4 (정적)
+	XMFLOAT3 pos_lh4 = { 40.0f, -6.0f, 480.0f };
+	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(4.5f, 4.5f, 4.5f) * XMMatrixTranslationFromVector(XMLoadFloat3(&pos_lh4)), XMMatrixIdentity(), pos_lh4, 0.f, false, false, false, 0.f, 0.f, false });
 
-	// 등대 1
-	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.0f, 1.0f, 1.0f) * XMMatrixTranslation(-20.0f, -2.0f, 32.0f) }); // index 1: lighthouse
+	// 등대 5 (정적)
+	XMFLOAT3 pos_lh5 = { 10.0f, -4.0f, 600.0f };
+	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.5f, 1.5f, 1.5f) * XMMatrixTranslationFromVector(XMLoadFloat3(&pos_lh5)), XMMatrixIdentity(), pos_lh5, 0.f, false, false, false, 0.f, 0.f, false });
 
-	// 등대 2
-	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(120.0f, -4.0f, 130.0f) });
+	// 가로등 1 (정적)
+	XMFLOAT3 pos_street1 = { -10.0f, -2.3f, 24.0f };
+	m_SceneInstances.push_back({ 4, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslationFromVector(XMLoadFloat3(&pos_street1)), XMMatrixIdentity(), pos_street1, 0.f, false, false, false, 0.f, 0.f, false });
 
-	//등대 3
-	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.5f, 1.5f, 1.5f) * XMMatrixTranslation(-60.0f, -2.0f, 240.0f) });
+	// 가로등 2 (정적)
+	XMFLOAT3 pos_street2 = { 15.0f, -2.3f, 27.0f };
+	m_SceneInstances.push_back({ 4, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslationFromVector(XMLoadFloat3(&pos_street2)), XMMatrixIdentity(), pos_street2, 0.f, false, false, false, 0.f, 0.f, false });
 
-	//등대 4
-	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(4.5f, 4.5f, 4.5f) * XMMatrixTranslation(40.0f, -6.0f, 480.0f) });
+	// 대형 섬 (정적)
+	XMFLOAT3 pos_mountain = { 100.0f, -6.0f, -150.0f };
+	m_SceneInstances.push_back({ 7, XMMatrixScaling(200.0f, 150.0f, 200.0f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslationFromVector(XMLoadFloat3(&pos_mountain)), XMMatrixIdentity(), pos_mountain, 0.f, false, false, false, 0.f, 0.f, false });
 
-	//등대 5
-	m_SceneInstances.push_back({ lighthouseModelIndex, XMMatrixScaling(1.5f, 1.5f, 1.5f) * XMMatrixTranslation(10.0f, -4.0f, 600.0f) });
-
-	// 가로등
-	m_SceneInstances.push_back({ 4, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(-10.0f, -2.3f, 24.0f) }); // index 4: streetlight
-	m_SceneInstances.push_back({ 4, XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixTranslation(15.0f, -2.3f, 27.0f) });
-
-
-	//대형 섬
-	m_SceneInstances.push_back({ 7, XMMatrixScaling(200.0f, 150.0f, 200.0f) * XMMatrixRotationY(XMConvertToRadians(90.0f)) * XMMatrixTranslation(100.0f, -6.0f, -150.0f) });
 
 	// --- 캐릭터와 보트의 자연스러운 배치 ---
 
-	// [캐릭터] -20.0f, -1.8f, 150.0f
+	// [캐릭터]
 	XMFLOAT3 charInitialPos = { -20.0f, -1.8f, 150.0f };
-	float charInitialRotation = XMConvertToRadians(180.0f); // << 180도 회전시켜 Z축 양의 방향이 정면이 되도록
+	float charInitialRotation = XMConvertToRadians(180.0f);
 	m_SceneInstances.push_back({
-		6,
-		XMMatrixIdentity(), // worldTransform (Frame에서 계산)
-		XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(charInitialRotation), // baseTransform
-		charInitialPos,
-		charInitialRotation,
-		true,  // canMove
-		false  // isAnimated
+		6,                                                                          // modelIndex
+		XMMatrixIdentity(),                                                         // worldTransform
+		XMMatrixScaling(0.02f, 0.02f, 0.02f) * XMMatrixRotationY(charInitialRotation),// baseTransform
+		charInitialPos,                                                             // currentPosition
+		charInitialRotation,                                                        // currentYRotation
+		true,                                                                       // canMove
+		false,                                                                      // isAnimated
+		false,                                                                      // movingForward
+		0.0f,                                                                       // animationOffset
+		3.0f,                                                                       // collisionRadius
+		false                                                                       // isMarkedForRemoval 
 		});
 
 
-
-	// [움직이는 보트] 섬들 사이를 항해하는 모습.
+	// [움직이는 보트]
 	XMFLOAT3 boatInitialPos = { -10.0f, -5.0f, 75.0f };
 	float boatInitialRotation = XMConvertToRadians(0.0f);
 	m_SceneInstances.push_back({
-		3,
-		XMMatrixIdentity(),
+		3,                                                                          // modelIndex
+		XMMatrixIdentity(),                                                         // worldTransform
 		XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixRotationY(boatInitialRotation), // baseTransform
-		boatInitialPos,
-		boatInitialRotation,
-		false, // canMove
-		true,  // isAnimated
-		true,  // movingForward
-		0.0f   // animationOffset
+		boatInitialPos,                                                             // currentPosition
+		boatInitialRotation,                                                        // currentYRotation
+		false,                                                                      // canMove
+		true,                                                                       // isAnimated
+		true,                                                                       // movingForward
+		0.0f,                                                                       // animationOffset
+		0.0f,                                                                       // collisionRadius
+		false                                                                       // isMarkedForRemoval
 		});
 
-	// [정박한 보트] 중앙 섬(섬 1) 근처에 정박한 모습.
+	// [정박한 보트]
 	XMFLOAT3 parkedBoatPos = { 40.0f, -5.0f, 80.0f };
 	float parkedBoatRotation = XMConvertToRadians(100.0f);
 	m_SceneInstances.push_back({
-		3,
-		XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixRotationY(parkedBoatRotation) * XMMatrixTranslation(parkedBoatPos.x, parkedBoatPos.y, parkedBoatPos.z), // 정적 객체는 worldTransform을 바로 계산
-		XMMatrixIdentity(), // baseTransform (사용 안 함)
-		parkedBoatPos,
-		parkedBoatRotation,
-		false, false // canMove, isAnimated
+		3,                                                                          // modelIndex
+		XMMatrixScaling(1.2f, 1.2f, 1.2f) * XMMatrixRotationY(parkedBoatRotation) * XMMatrixTranslation(parkedBoatPos.x, parkedBoatPos.y, parkedBoatPos.z), // worldTransform
+		XMMatrixIdentity(),                                                         // baseTransform
+		parkedBoatPos,                                                              // currentPosition
+		parkedBoatRotation,                                                         // currentYRotation
+		false,                                                                      // canMove
+		false,                                                                      // isAnimated
+		false,                                                                      // movingForward
+		0.0f,                                                                       // animationOffset
+		0.0f,                                                                       // collisionRadius
+		false                                                                       // isMarkedForRemoval
 		});
 
-	// [배경용 floor] 바다 역할을 할 기본 바닥. 매우 넓게 깔아줍니다.
-	m_SceneInstances.push_back({ 0, XMMatrixScaling(5.0f, 1.0f, 5.0f) * XMMatrixTranslation(0.0f, -6.2f, 0.0f) }); // index 0: floor
+
+
+	// [배경용 floor]
+	m_SceneInstances.push_back({ 0, XMMatrixScaling(5.0f, 1.0f, 5.0f) * XMMatrixTranslation(0.0f, -6.2f, 0.0f), XMMatrixIdentity(), {}, 0.f, false, false, false, 0.f, 0.f, false });
 
 
 	// --- 광원 객체 초기화 ---
@@ -289,27 +307,58 @@ void GraphicsClass::Shutdown()
 
 bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, InputClass* input, float deltaTime)
 {
+	// =================================================================
+		// 1. 입력 처리 (Input Processing)
+		// =================================================================
+	if (input->IsMouseButtonPressed(0))
+	{
+		BulletInstance newBullet;
+		newBullet.position = gameCamera->GetPosition();
 
-	//카메라(나) 위치
+		XMFLOAT3 forward, right, up;
+		gameCamera->GetDirectionVectors(forward, right, up);
+		newBullet.direction = forward;
+
+		newBullet.speed = 30.0f; // 적절한 속도로 조절
+		newBullet.lifeTime = 3.0f; // 생존 시간 조절
+		newBullet.collisionRadius = 0.2f;
+		newBullet.isMarkedForRemoval = false; // 명시적 초기화
+
+		m_Bullets.push_back(newBullet);
+	}
+
+	// =================================================================
+	// 2. 객체 상태 업데이트 (Update State)
+	// =================================================================
+
+	// 2-1. 모든 총알 업데이트
+	for (auto& bullet : m_Bullets)
+	{
+		// 위치 이동
+		XMVECTOR pos = XMLoadFloat3(&bullet.position);
+		XMVECTOR dir = XMLoadFloat3(&bullet.direction);
+		pos += dir * bullet.speed * deltaTime;
+		XMStoreFloat3(&bullet.position, pos);
+
+		// 생존 시간 감소
+		bullet.lifeTime -= deltaTime;
+
+		// 월드 행렬 업데이트 (회전 포함)
+		XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+		if (XMVector3Equal(XMVector3Normalize(dir), XMVector3Normalize(up)) || XMVector3Equal(XMVector3Normalize(dir), -XMVector3Normalize(up)))
+		{
+			up = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+		}
+		XMMATRIX rotationMatrix = XMMatrixLookToLH(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f), dir, up);
+		rotationMatrix = XMMatrixInverse(nullptr, rotationMatrix);
+		bullet.worldTransform = XMMatrixScaling(0.1f, 0.1f, 0.1f) * rotationMatrix * XMMatrixTranslationFromVector(pos);
+	}
+
+	// 2-2. 모든 씬 객체(AI, 보트 등) 업데이트
 	XMFLOAT3 cameraPosition = gameCamera->GetPosition();
-
-	// 보트 직선 운동 업데이트
-	float moveRange = 5.0f;
-	if (m_BoatMovingForward)
-	{
-		m_BoatZOffset += m_BoatSpeed;
-		if (m_BoatZOffset > moveRange) m_BoatMovingForward = false;
-	}
-	else
-	{
-		m_BoatZOffset -= m_BoatSpeed;
-		if (m_BoatZOffset < -moveRange) m_BoatMovingForward = true;
-	}
-
-	// 애니메이션이 적용될 객체의 월드 행렬을 업데이트합니다.
 	for (auto& instance : m_SceneInstances)
 	{
-		if (instance.isAnimated)
+		if (instance.isAnimated) // 움직이는 보트
 		{
 			float moveRange = 20.0f;
 			float boatSpeed = 5.0f;
@@ -323,17 +372,10 @@ bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, InputClass*
 				if (instance.animationOffset < -moveRange) instance.movingForward = true;
 			}
 
-			// 애니메이션 변환 
 			XMMATRIX animationTransform = XMMatrixTranslation(0.0f, 0.0f, instance.animationOffset);
-
-			// 월드 변환 행렬 계산
-			instance.worldTransform = instance.baseTransform 
-				* animationTransform     
-				* XMMatrixTranslation(instance.currentPosition.x, instance.currentPosition.y, instance.currentPosition.z);
+			instance.worldTransform = instance.baseTransform * animationTransform * XMMatrixTranslation(instance.currentPosition.x, instance.currentPosition.y, instance.currentPosition.z);
 		}
-
-		// 움직일 수 있는 객체(male.fbx)만 처리
-		else if (instance.canMove)
+		else if (instance.canMove) // AI 캐릭터
 		{
 			float dx = cameraPosition.x - instance.currentPosition.x;
 			float dz = cameraPosition.z - instance.currentPosition.z;
@@ -345,125 +387,86 @@ bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, InputClass*
 
 			if (distance < followDistance)
 			{
-				// 회전: atan2 + 180도(PI) 보정
-				instance.currentYRotation = atan2(dx, dz); // << 이 각도는 Z+ 방향이 0도
-
+				instance.currentYRotation = atan2(dx, dz);
 				if (distance > stopDistance) {
-					// 이동
 					XMVECTOR moveDirection = XMVector3Normalize(XMVectorSet(dx, 0.0f, dz, 0.0f));
 					XMVECTOR movement = moveDirection * moveSpeed * deltaTime;
 					instance.currentPosition.x += XMVectorGetX(movement);
 					instance.currentPosition.z += XMVectorGetZ(movement);
 				}
 			}
-
-			// 월드 변환 행렬 계산
-			// 순서: (스케일*초기회전) -> (카메라 바라보도록 회전) -> (월드 위치로 이동)
-			instance.worldTransform = instance.baseTransform
-				* XMMatrixRotationY(instance.currentYRotation)
-				* XMMatrixTranslation(instance.currentPosition.x, instance.currentPosition.y, instance.currentPosition.z);
+			instance.worldTransform = instance.baseTransform * XMMatrixRotationY(instance.currentYRotation) * XMMatrixTranslation(instance.currentPosition.x, instance.currentPosition.y, instance.currentPosition.z);
 		}
-
-		//총알 발사
-		if (input->IsMouseButtonPressed(0))
-		{
-			BulletInstance newBullet;
-			newBullet.position = gameCamera->GetPosition();
-
-			// <<-- 새로운 방식으로 방향 벡터 가져오기 -->>
-			XMFLOAT3 forward, right, up;
-			gameCamera->GetDirectionVectors(forward, right, up);
-			newBullet.direction = forward; // 카메라의 현재 전방 벡터를 총알 방향으로 설정
-
-			newBullet.speed = 3.0f;
-			newBullet.lifeTime = 20.0f;
-
-			m_Bullets.push_back(newBullet);
-		}
-
-		//총알 이동, 생존
-		for (auto& bullet : m_Bullets)
-		{
-			// 위치 이동
-			XMVECTOR pos = XMLoadFloat3(&bullet.position);
-			XMVECTOR dir = XMLoadFloat3(&bullet.direction);
-			pos += dir * bullet.speed * deltaTime;
-			XMStoreFloat3(&bullet.position, pos);
-
-			// 생존 시간 감소
-			bullet.lifeTime -= deltaTime;
-
-			// --- 월드 행렬 업데이트 (이 부분을 수정) ---
-
-			// 1. 기본 전방 벡터 (모델이 기본적으로 바라보는 방향, 보통 Z+)
-			XMVECTOR defaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-
-			// 2. 실제 진행 방향 벡터 (이미 dir에 있음)
-			// 3. 두 벡터 사이의 회전을 나타내는 회전축과 회전각 계산
-			//    (더 간단한 방법은 LookTo 행렬을 사용하는 것)
-
-			// <<-- 더 쉽고 안정적인 방법: LookTo 행렬 생성 -->>
-			XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-
-			// 진행 방향(dir)과 up 벡터가 거의 평행할 경우(총알이 수직으로 날아갈 때),
-			// up 벡터를 약간 다른 방향으로 틀어줘야 행렬 계산이 깨지지 않습니다.
-			if (XMVector3Equal(XMVector3Normalize(dir), XMVector3Normalize(up)) || XMVector3Equal(XMVector3Normalize(dir), -XMVector3Normalize(up)))
-			{
-				up = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f); // up을 x축으로 변경
-			}
-
-			// LookToLH: 특정 '방향'을 바라보는 변환 행렬을 만듭니다.
-			// XMMatrixLookAtLH는 특정 '지점'을 바라보는 행렬을 만듭니다.
-			XMMATRIX rotationMatrix = XMMatrixLookToLH(
-				XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f), // 회전의 중심은 원점
-				dir,                                 // 바라볼 방향
-				up                                   // 상향 벡터
-			);
-
-			// LookTo 행렬은 뷰 행렬처럼 역행렬이므로, 모델에 적용하려면 다시 역행렬을 취해야 합니다.
-			rotationMatrix = XMMatrixInverse(nullptr, rotationMatrix);
-
-			// 최종 월드 행렬: 크기 -> 회전 -> 위치 순서로 적용
-			bullet.worldTransform = XMMatrixScaling(0.1f, 0.1f, 0.1f) * rotationMatrix * XMMatrixTranslationFromVector(pos);
-		}
-
-		// 수명이 다한 총알 제거
-		m_Bullets.erase(
-			std::remove_if(m_Bullets.begin(), m_Bullets.end(), [](const BulletInstance& b) {
-				return b.lifeTime <= 0.0f;
-				}),
-			m_Bullets.end()
-		);
-
 	}
 
-
-
-	//float deltaTime = 1.0f / 60.0f; 
+	// 2-3. 기타 월드 업데이트 (애니메이션, 등대 조명 등)
 	for (auto& model : m_Models)
 	{
 		model->UpdateAnimation(deltaTime);
 	}
 
-	//등대 조명 회전
 	m_LighthouseRotationAngle += m_LighthouseRotationSpeed * deltaTime;
 	if (m_LighthouseRotationAngle > XM_2PI)
 	{
 		m_LighthouseRotationAngle -= XM_2PI;
 	}
-
 	float newDirX = sinf(m_LighthouseRotationAngle);
 	float newDirZ = cosf(m_LighthouseRotationAngle);
-
 	if (m_Lights.size() > 1 && m_Lights[1] != nullptr)
 	{
-		// SetDirection을 호출하여 조명의 방향을 실시간으로 변경
 		m_Lights[1]->SetDirection(newDirX, -0.3f, newDirZ);
 	}
 
+	// =================================================================
+	// 3. 충돌 감지 (Collision Detection)
+	// =================================================================
+	for (auto& bullet : m_Bullets)
+	{
+		if (bullet.isMarkedForRemoval) continue; // 이미 충돌한 총알은 스킵
 
+		for (auto& instance : m_SceneInstances)
+		{
+			if (instance.collisionRadius <= 0.0f) continue; // 충돌체가 없는 객체는 스킵
 
+			// 두 객체의 위치 벡터 가져오기
+			XMVECTOR bulletPos = XMLoadFloat3(&bullet.position);
+			XMVECTOR instancePos = XMLoadFloat3(&instance.currentPosition);
 
+			// 거리 제곱 비교로 충돌 판정
+			XMVECTOR distanceVector = bulletPos - instancePos;
+			XMVECTOR distanceSquared = XMVector3LengthSq(distanceVector);
+			float combinedRadius = bullet.collisionRadius + instance.collisionRadius;
+			float combinedRadiusSquared = combinedRadius * combinedRadius;
+
+			if (XMVectorGetX(distanceSquared) <= combinedRadiusSquared)
+			{
+				bullet.isMarkedForRemoval = true;
+				instance.isMarkedForRemoval = true;
+				break; // 이 총알은 역할을 다했으므로 다음 총알로 넘어감
+			}
+		}
+	}
+
+	// =================================================================
+	// 4. 객체 제거 (Cleanup)
+	// =================================================================
+	m_Bullets.erase(
+		std::remove_if(m_Bullets.begin(), m_Bullets.end(), [](const BulletInstance& b) {
+			return b.lifeTime <= 0.0f || b.isMarkedForRemoval;
+			}),
+		m_Bullets.end()
+	);
+
+	m_SceneInstances.erase(
+		std::remove_if(m_SceneInstances.begin(), m_SceneInstances.end(), [](const SceneObjectInstance& inst) {
+			return inst.isMarkedForRemoval;
+			}),
+		m_SceneInstances.end()
+	);
+
+	// =================================================================
+	// 5. UI 업데이트 및 렌더링 (UI & Render)
+	// =================================================================
 	if (!m_Text->SetFPS(fps, m_D3D->GetDeviceContext())) return false;
 	if (!m_Text->SetCPU(cpu, m_D3D->GetDeviceContext())) return false;
 
@@ -528,12 +531,15 @@ bool GraphicsClass::Render(CameraClass* gameCamera)
 		}
 	}
 
-	//총알
-	ModelClass* bulletModel = m_Models[m_bulletModelIndex].get();
-	bulletModel->Render(m_D3D->GetDeviceContext());
+	
 
 	for (const auto& bullet : m_Bullets)
 	{
+
+		//총알
+		ModelClass* bulletModel = m_Models[m_bulletModelIndex].get();
+		bulletModel->Render(m_D3D->GetDeviceContext());
+
 		// 총알은 애니메이션이 없으므로 StaticShader 사용
 		m_StaticShader->Render(m_D3D->GetDeviceContext(), bulletModel->GetIndexCount(),
 			bullet.worldTransform, viewMatrix, projectionMatrix,

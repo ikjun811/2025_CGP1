@@ -44,10 +44,14 @@ struct SceneObjectInstance
 	float currentYRotation;
 	bool canMove = false;
 	bool isAnimated = false;
+	
 
 	// isAnimated를 위한 상태
 	bool movingForward = true;
 	float animationOffset = 0.0f;
+
+	float collisionRadius = 0.0f;
+	bool isMarkedForRemoval = false;
 };
 
 struct BulletInstance
@@ -57,6 +61,8 @@ struct BulletInstance
 	XMFLOAT3 direction;
 	float speed;
 	float lifeTime; // 총알이 살아있을 시간 (초)
+	float collisionRadius = 0.0f;
+	bool isMarkedForRemoval = false;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
