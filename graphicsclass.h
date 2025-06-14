@@ -18,6 +18,8 @@
 #include "textureshaderclass.h"
 #include "bitmapclass.h"
 #include "textclass.h"
+#include <directxmath.h>
+#include "billboardshaderclass.h"
 
 #include <vector>
 #include <string>
@@ -83,6 +85,9 @@ public:
 private:
 	bool Render(CameraClass* gameCamera);
 
+	bool Raycast(const XMFLOAT3& rayOrigin, const XMFLOAT3& rayDirection, float& out_distance) const;
+	bool FindGroundHeight(float x, float z, float& out_height) const;
+
 	float m_BoatZOffset;
 	float m_BoatSpeed;
 	bool m_BoatMovingForward;
@@ -118,6 +123,12 @@ private:
 	float m_LighthouseRotationAngle; // 현재 회전 각도 (라디안)
 	float m_LighthouseRotationSpeed; // 회전 속도 (라디안/초)
 
+	std::vector<int> m_terrainModelIndices; // 지형 모델의 인덱스를 저장할 벡터
+
+	BillboardShaderClass* m_BillboardShader; // <<-- 셰이더 객체 추가
+
+	int m_billboardModelIndex = -1; // <<-- 빌보드용 사각형 모델 인덱스
+	XMFLOAT3 m_airshipPosition;     // <<-- 비행선 위치
 
 };
 

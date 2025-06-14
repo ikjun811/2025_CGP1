@@ -81,6 +81,9 @@
     <ClInclude Include="pbrshaderclass.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="billboardshaderclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bitmapclass.cpp">
@@ -146,6 +149,9 @@
     <ClCompile Include="pbrshaderclass.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="billboardshaderclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\color.ps">
@@ -189,6 +195,9 @@
       <Filter>리소스 파일</Filter>
     </FxCompile>
     <FxCompile Include="data\pbrShader.hlsl">
+      <Filter>리소스 파일</Filter>
+    </FxCompile>
+    <FxCompile Include="data\billboard.hlsl">
       <Filter>리소스 파일</Filter>
     </FxCompile>
   </ItemGroup>

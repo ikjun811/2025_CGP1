@@ -139,6 +139,9 @@ public:
 	void SetAnimationClip(const std::string& clipName);
 	const std::vector<XMMATRIX>& GetFinalBoneTransforms() const;
 
+	const std::vector<SkinnedVertex>& GetVertices() const;
+	const std::vector<unsigned long>& GetIndices() const;
+
 private:
 	// 버퍼 초기화 및 해제
 	bool InitializeBuffers(ID3D11Device* device);

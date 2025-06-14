@@ -620,6 +620,8 @@ void ModelClass::UpdateAnimation(float deltaTime)
 {
 	if (!m_currentAnimation) return;
 
+	std::fill(m_finalBoneTransforms.begin(), m_finalBoneTransforms.end(), XMMatrixIdentity());
+
 	// 애니메이션 시간 업데이트
 	m_animationTime += m_currentAnimation->ticksPerSecond * deltaTime;
 	if (m_animationTime > m_currentAnimation->duration)
@@ -799,4 +801,14 @@ bool ModelClass::LoadEmbeddedTexture(ID3D11Device* device, const aiScene* scene)
 const vector<XMMATRIX>& ModelClass::GetFinalBoneTransforms() const
 {
 	return m_finalBoneTransforms;
+}
+
+const std::vector<SkinnedVertex>& ModelClass::GetVertices() const
+{
+	return m_vertices;
+}
+
+const std::vector<unsigned long>& ModelClass::GetIndices() const
+{
+	return m_indices;
 }

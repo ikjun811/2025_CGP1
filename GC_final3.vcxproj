@@ -134,6 +134,7 @@
   <ItemGroup>
     <ClInclude Include="AlignedAllocationPolicy.h" />
     <ClInclude Include="AnimationTypes.h" />
+    <ClInclude Include="billboardshaderclass.h" />
     <ClInclude Include="bitmapclass.h" />
     <ClInclude Include="cameraclass.h" />
     <ClInclude Include="colorshaderclass.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="timerclass.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="billboardshaderclass.cpp" />
     <ClCompile Include="bitmapclass.cpp" />
     <ClCompile Include="cameraclass.cpp" />
     <ClCompile Include="colorshaderclass.cpp" />
@@ -191,6 +193,9 @@
     <Text Include="data\fontdata.txt" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="data\billboard.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="data\pbrShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </FxCompile>
