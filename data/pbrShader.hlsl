@@ -5,7 +5,7 @@
 
 
 // --- 상수 (C++ 클래스와 일치) ---
-#define NUM_SPOT_LIGHTS 3
+#define NUM_SPOT_LIGHTS 7
 
 // --- 상수 버퍼  ---
 cbuffer MatrixBuffer : register(b0)

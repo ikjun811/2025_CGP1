@@ -20,6 +20,7 @@
 #include "textclass.h"
 #include <directxmath.h>
 #include "billboardshaderclass.h"
+#include "oceanshaderclass.h" 
 
 #include <vector>
 #include <string>
@@ -67,6 +68,13 @@ struct BulletInstance
 	bool isMarkedForRemoval = false;
 };
 
+//씬 제어용
+enum class GameState
+{
+	TitleScreen,
+	Playing
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -99,6 +107,7 @@ private:
 
 private:
 	D3DClass* m_D3D;
+	GameState m_gameState;
 
 	// 고유한 모델들을 저장하는 벡터 (메모리 효율화)
 	std::vector<std::unique_ptr<ModelClass>> m_Models;
@@ -126,9 +135,13 @@ private:
 	std::vector<int> m_terrainModelIndices; // 지형 모델의 인덱스를 저장할 벡터
 
 	BillboardShaderClass* m_BillboardShader; // <<-- 셰이더 객체 추가
+	OceanShaderClass* m_OceanShader;
 
+	float m_totalTime;
 	int m_billboardModelIndex = -1; // <<-- 빌보드용 사각형 모델 인덱스
 	XMFLOAT3 m_airshipPosition;     // <<-- 비행선 위치
+
+	BitmapClass* m_TitleBitmap;
 
 };
 

@@ -96,7 +96,8 @@ public:
 	{
 		Default,  // 정적, 단일 텍스처
 		Animated, // 애니메이션, 단일 텍스처
-		PBR       // 정적, 다중 텍스처
+		PBR,       // 정적, 다중 텍스처
+		Ocean   //바다
 	};
 
 
@@ -118,8 +119,8 @@ public:
 
 	// 1. 기존 단일 텍스처용 (OBJ, FBX 등)
 	bool Initialize(ID3D11Device* device, const WCHAR* modelFilename, const WCHAR* textureFilename = nullptr);
-	// 2. 새로운 다중 텍스처용 (PBR 등대 모델용)
-	bool Initialize(ID3D11Device* device, const WCHAR* modelFilename, const std::vector<wstring>& textureFilenames);
+	// 2. 새로운 다중 텍스처용 
+	bool Initialize(ID3D11Device* device, const WCHAR* modelFilename, const std::vector<wstring>& textureFilenames, ShaderType shaderType);
 
 	bool LoadAnimation(const WCHAR* animationFilename, const std::string& clipName);
 

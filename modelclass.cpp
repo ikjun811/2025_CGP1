@@ -75,7 +75,7 @@ bool ModelClass::Initialize(ID3D11Device* device, const WCHAR* modelFilename, co
 }
 
 
-bool ModelClass::Initialize(ID3D11Device* device, const WCHAR* modelFilename, const vector<wstring>& textureFilenames)
+bool ModelClass::Initialize(ID3D11Device* device, const WCHAR* modelFilename, const vector<wstring>& textureFilenames, ShaderType shaderType)
 {
 	Assimp::Importer importer;
 	std::wstring ws(modelFilename);
@@ -93,8 +93,9 @@ bool ModelClass::Initialize(ID3D11Device* device, const WCHAR* modelFilename, co
 	// 다중 텍스처 로드
 	if (!LoadMultipleTextures(device, textureFilenames)) return false;
 
-	// 셰이더 타입 PBR로 고정
-	m_shaderType = ShaderType::PBR;
+	//받아온 셰이더 타입
+	m_shaderType = shaderType;
+
 
 	if (!InitializeBuffers(device)) return false;
 

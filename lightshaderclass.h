@@ -17,7 +17,7 @@ using namespace std;
 using namespace DirectX;
 
 // 셰이더와 동기화할 상수
-constexpr int NUM_SPOT_LIGHTS_ANIM = 3; // 스포트라이트 개수
+constexpr int NUM_SPOT_LIGHTS_ANIM = 7; // 스포트라이트 개수
 constexpr int MAX_BONES = 256;         // 최대 뼈 개수
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 //staticLight.hlsl
 
-#define NUM_SPOT_LIGHTS 3
+#define NUM_SPOT_LIGHTS 7
 
 // -- 상수 버퍼 (Constant Buffers) --
 cbuffer MatrixBuffer : register(b0)

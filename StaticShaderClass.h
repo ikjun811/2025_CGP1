@@ -16,7 +16,7 @@
 using namespace std;
 using namespace DirectX;
 
-constexpr int NUM_SPOT_LIGHTS_STATIC = 3;
+constexpr int NUM_SPOT_LIGHTS_STATIC = 7;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: StaticShaderClass

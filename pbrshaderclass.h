@@ -18,7 +18,7 @@ using namespace std;
 using namespace DirectX;
 
 // 셰이더와 동기화할 상수 (StaticShaderClass와 동일하게 유지)
-constexpr int NUM_SPOT_LIGHTS_PBR = 3;
+constexpr int NUM_SPOT_LIGHTS_PBR = 7;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: PBRShaderClass
