@@ -39,12 +39,11 @@ private:
 		float padding;
 	};
 
-	// Light 구조체는 HLSL과 일치해야 함
 	struct Light
 	{
 		XMFLOAT4 position;
 		XMFLOAT3 direction;
-		float spotAngle; // innerCone - outerCone
+		float spotAngle; 
 		XMFLOAT4 diffuseColor;
 		XMFLOAT4 specularColor;
 		float specularPower;
@@ -57,7 +56,7 @@ private:
 	{
 		XMFLOAT4 ambientColor;
 		Light directionalLight;
-		Light spotLights[3]; // 셰이더의 NUM_SPOT_LIGHTS와 일치
+		Light spotLights[3]; 
 	};
 
 	struct TimeBufferType

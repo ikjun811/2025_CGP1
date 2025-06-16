@@ -130,7 +130,6 @@ PixelInputType LightVertexShader(VertexInputType input)
 
 
 // -- Pixel Shader --
-// 픽셀 셰이더는 수정할 필요가 없습니다. 이전과 동일하게 작동합니다.
 float4 LightPixelShader(PixelInputType input) : SV_TARGET
 {
     float4 textureColor = shaderTexture.Sample(SampleType, input.tex);

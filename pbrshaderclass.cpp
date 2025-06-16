@@ -270,7 +270,7 @@ bool PBRShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	deviceContext->Unmap(m_lightBuffer, 0);
 	deviceContext->PSSetConstantBuffers(2, 1, &m_lightBuffer);
 
-	// --- 텍스처 리소스 설정 (이 부분이 다름) ---
+	// --- 텍스처 리소스 설정  ---
 	if (!textures.empty())
 	{
 		// HLSL의 t0, t1, t2... 레지스터에 순서대로 바인딩

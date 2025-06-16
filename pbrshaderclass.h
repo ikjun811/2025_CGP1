@@ -62,10 +62,9 @@ public:
     bool Initialize(ID3D11Device* device, HWND hwnd);
     void Shutdown();
 
-    // Render 함수가 다중 텍스처를 받도록 수정됨
     bool Render(ID3D11DeviceContext* deviceContext, int indexCount,
         XMMATRIX world, XMMATRIX view, XMMATRIX projection,
-        const vector<ID3D11ShaderResourceView*>& textures, // vector<...>로 변경
+        const vector<ID3D11ShaderResourceView*>& textures, 
         const vector<LightClass*>& lights,
         CameraClass* camera);
 
@@ -74,10 +73,10 @@ private:
     void ShutdownShader();
     void OutputShaderErrorMessage(ID3D10Blob* blob, HWND hwnd, const WCHAR* filename);
 
-    // SetShaderParameters 함수도 다중 텍스처를 받도록 수정됨
+
     bool SetShaderParameters(ID3D11DeviceContext* deviceContext,
         XMMATRIX world, XMMATRIX view, XMMATRIX projection,
-        const vector<ID3D11ShaderResourceView*>& textures, // vector<...>로 변경
+        const vector<ID3D11ShaderResourceView*>& textures,
         const vector<LightClass*>& lights,
         CameraClass* camera);
     void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount);

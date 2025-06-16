@@ -33,7 +33,7 @@ bool BillboardShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexC
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture,
 	const XMFLOAT3& cameraPosition, const XMFLOAT3& cameraUp)
 {
-	// SetShaderParameters에 모든 인자를 전달하도록 수정합니다.
+	// SetShaderParameters에 모든 인자를 전달하도록 
 	if (!SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, cameraPosition, cameraUp))
 	{
 		return false;
@@ -44,7 +44,7 @@ bool BillboardShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexC
 	return true;
 }
 
-// InitializeShader 함수가 하나의 HLSL 파일을 받도록 수정합니다.
+// InitializeShader 함수가 하나의 HLSL 파일을 받도록
 bool BillboardShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, const WCHAR* shaderFilename)
 {
 	HRESULT result;
@@ -116,15 +116,15 @@ bool BillboardShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, con
 
 	// Matrix Buffer (b0) 생성
 	bufferDesc.ByteWidth = sizeof(MatrixBufferType);
-	result = device->CreateBuffer(&bufferDesc, NULL, &m_matrixBuffer); // <<-- 이 호출이 성공해야 합니다.
+	result = device->CreateBuffer(&bufferDesc, NULL, &m_matrixBuffer);
 	if (FAILED(result))
 	{
-		return false; // 혹시 여기서 실패하고 있지는 않은지 확인
+		return false; 
 	}
 
 	// Billboard Buffer (b1) 생성
 	bufferDesc.ByteWidth = sizeof(BillboardBufferType);
-	result = device->CreateBuffer(&bufferDesc, NULL, &m_billboardBuffer); // <<-- 이 호출이 성공해야 합니다.
+	result = device->CreateBuffer(&bufferDesc, NULL, &m_billboardBuffer); 
 	if (FAILED(result))
 	{
 		return false;
@@ -179,7 +179,6 @@ void BillboardShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HW
 	MessageBox(hwnd, L"Error compiling shader.  Check shader-error.txt for message.", shaderFilename, MB_OK);
 }
 
-// SetShaderParameters 함수가 모든 인자를 받도록 수정합니다.
 bool BillboardShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture,
 	const XMFLOAT3& cameraPosition, const XMFLOAT3& cameraUp)

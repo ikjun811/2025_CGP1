@@ -60,7 +60,7 @@ void CameraClass::Render()
 	float yaw = m_rotation.y * 0.0174532925f;
 	float roll = m_rotation.z * 0.0174532925f;
 
-	// 회전 행렬 생성 (Roll, Pitch, Yaw 순서 또는 Pitch, Yaw, Roll 순서 - 예제는 P,Y,R)
+	// 회전 행렬 생성 (Roll, Pitch, Yaw 순서 또는 Pitch, Yaw, Roll 순서)
 	rotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
 
 	XMVECTOR defaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -77,7 +77,7 @@ void CameraClass::Render()
 	// 카메라가 바라보는 최종 목표 지점 계산
 	lookAtTarget = position + lookDirection;
 
-	// 최종적으로 올바른 값들로 뷰 행렬을 생성합니다.
+	// 최종적으로 올바른 값들로 뷰 행렬을 생성
 	m_viewMatrix = XMMatrixLookAtLH(position, lookAtTarget, up);
 }
 
@@ -93,8 +93,7 @@ void CameraClass::HandleMovement(const InputClass& input, float frameTime)
 	input.GetMouseDelta(mouseDeltaX, mouseDeltaY);
 
 
-	// 마우스 입력으로 Yaw, Pitch 업데이트 (라디안으로 직접 변경 또는 각도로 변경 후 Render에서 변환)
-	// 예제 코드의 감도(0.001f) 사용
+	// 마우스 입력으로 Yaw, Pitch 업데이트
 	m_rotation.y += (float)mouseDeltaX * 0.1f; // Yaw (좌우 회전)
 	m_rotation.x += (float)mouseDeltaY * 0.1f; // Pitch (상하 회전)
 
@@ -143,8 +142,6 @@ void CameraClass::HandleMovement(const InputClass& input, float frameTime)
 	positionVec += camRightVec * moveRight;
 	XMStoreFloat3(&m_position, positionVec);
 
-	// 카메라 위치가 변경되었으므로 Render()를 호출하여 뷰 행렬을 다시 계산해야 함
-	// 또는, 이 함수가 Camera::Render() 전에 호출된다면 Render()에서 자동으로 반영됨
 }
 
 void CameraClass::GetDirectionVectors(XMFLOAT3& forward, XMFLOAT3& right, XMFLOAT3& up)

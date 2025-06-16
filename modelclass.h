@@ -154,10 +154,10 @@ private:
 	bool LoadMultipleTextures(ID3D11Device* device, const vector<wstring>& filenames);
 	void ReleaseTextures();
 
-	// --- 모델 로더 선택 및 호출 ---
+	// 모델 로더 선택 및 호출
 	//bool LoadModel(const WCHAR* filename);
 
-	 // --- 모델 로더 관련 함수 (기존과 동일) ---
+	 // 모델 로더 관련 함수 
 	void ReadNodeHierarchy(const aiNode* pNode, BoneNode& outNode);
 	void ProcessMesh(aiMesh* mesh, const aiScene* scene);
 	void ProcessBones(aiMesh* mesh, int vertexOffset);
@@ -166,7 +166,7 @@ private:
 	bool ReadFileCounts(const WCHAR* filename, int& vertexCount, int& textureCount, int& normalCount, int& faceCount);
 	bool LoadDataStructures(const WCHAR* filename, int vertexCount, int textureCount, int normalCount, int faceCount);
 
-	// --- 애니메이션 관련 내부 함수 (기존과 동일) ---
+	// 애니메이션 관련 내부 함수
 	void CalculateBoneTransform(const BoneNode& node, const XMMATRIX& parentTransform);
 	XMMATRIX FindInterpolatedPosition(float animationTime, const string& boneName);
 	XMMATRIX FindInterpolatedRotation(float animationTime, const string& boneName);
@@ -187,7 +187,7 @@ private:
 
 	ShaderType m_shaderType;
 
-	// --- 애니메이션 데이터 멤버 ---
+	// 애니메이션 데이터 멤버 
 	map<string, BoneInfo> m_boneInfoMap;
 	int m_boneCounter = 0;
 	BoneNode m_skeletonRoot;

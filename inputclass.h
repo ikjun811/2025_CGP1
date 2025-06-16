@@ -33,7 +33,7 @@ public:
 	bool IsMouseButtonDown(int button) const;
 	bool IsMouseButtonPressed(int button) const;
 
-	void GetMouseLocation(int&, int&) const; // 현재 마우스 커서 위치 (화면 좌표, 필요하다면)
+	void GetMouseLocation(int&, int&) const; // 현재 마우스 커서 위치
 	void GetMouseDelta(long&, long&) const;   // 이전 프레임 대비 마우스 이동량
 
 private:
@@ -44,7 +44,7 @@ private:
 	IDirectInputDevice8* m_mouse;
 
 	DIMOUSESTATE m_mouseState;        // 현재 마우스 상태
-	DIMOUSESTATE m_lastMouseState;    // 이전 프레임 마우스 상태 (델타 계산용, 예제 코드처럼) - 또는 직접 델타 계산
+	DIMOUSESTATE m_lastMouseState;    // 이전 프레임 마우스 상태
 	long m_mouseXDelta;               // 마우스 X축 이동량
 	long m_mouseYDelta;               // 마우스 Y축 이동량
 

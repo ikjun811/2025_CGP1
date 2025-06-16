@@ -85,10 +85,6 @@ bool InputClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int
 	}
 
 	// 마우스 협력 수준 설정 (포그라운드, 독점)
-	// DISCL_EXCLUSIVE: 이 애플리케이션만 마우스 입력을 독점적으로 받음
-	// DISCL_NOWINKEY: Windows 키 비활성화 (선택 사항)
-	// DISCL_FOREGROUND: 애플리케이션 창이 활성화되어 있을 때만 입력 받음
-	// FPS 카메라에서는 마우스 커서를 숨기고 독점 모드로 사용하는 것이 일반적입니다.
 	result = m_mouse->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE | DISCL_NOWINKEY);
 	if (FAILED(result))
 	{
@@ -241,7 +237,7 @@ bool InputClass::ReadMouse()
 	}
 
 
-	m_mouseXDelta = m_mouseState.lX; // lX, lY는 이미 상대 이동량임
+	m_mouseXDelta = m_mouseState.lX; 
 	m_mouseYDelta = m_mouseState.lY;
 
 
@@ -250,11 +246,9 @@ bool InputClass::ReadMouse()
 
 bool InputClass::IsMouseButtonDown(int button) const
 {
-	// m_mouseState.rgbButtons 배열은 마우스 버튼 상태를 담고 있습니다.
 	// button 0: 좌클릭, 1: 우클릭, 2: 휠클릭
 	if (button < 0 || button > 3) return false;
 
-	// 0x80 비트가 켜져 있으면 버튼이 눌린 상태입니다.
 	return (m_mouseState.rgbButtons[button] & 0x80) ? true : false;
 }
 
@@ -262,7 +256,6 @@ bool InputClass::IsMouseButtonPressed(int button) const
 {
 	if (button < 0 || button > 3) return false;
 
-	// 현재는 눌려있고(true), 이전 프레임에는 안 눌려있었다면(false) -> "눌리는 순간"
 	bool current_state = (m_mouseState.rgbButtons[button] & 0x80);
 	bool last_state = (m_lastMouseState.rgbButtons[button] & 0x80);
 

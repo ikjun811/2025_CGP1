@@ -226,7 +226,6 @@ float4 PBRPixelShader(PixelInputType input) : SV_TARGET
     }
 
     // 4. 최종 색상 조합
-    // Ambient Light (IBL을 사용하지 않을 경우, AO와 ambientColor로 근사)
     float3 ambient = ambientColor.rgb * albedo * ao;
     float3 color = ambient + Lo;
     

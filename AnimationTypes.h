@@ -13,7 +13,7 @@ struct SkinnedVertex
     XMFLOAT3 Position;
     XMFLOAT2 TexCoord;
     XMFLOAT3 Normal;
-    XMFLOAT3 Tangent; // 노멀 매핑 등을 위해 추가 (선택 사항)
+    XMFLOAT3 Tangent; // 노멀 매핑 등을 위해 추가
 
     // 스키닝 데이터
     XMFLOAT4 BoneWeights; // 각 뼈의 가중치
@@ -25,7 +25,7 @@ struct BoneInfo
 {
     int id;                      // 뼈의 고유 ID (0부터 시작)
     std::string name;            // 뼈의 이름
-    XMMATRIX inverseBindPose;    // T-포즈(기본 자세)를 기준으로 한 역행렬
+    XMMATRIX inverseBindPose;    // T-포즈를 기준으로 한 역행렬
 };
 
 // 애니메이션의 특정 시간 지점(Keyframe)에 대한 데이터
@@ -45,7 +45,7 @@ struct BoneAnimation
     std::vector<Keyframe<XMFLOAT3>> scaleKeys;
 };
 
-// 하나의 애니메이션 클립 (예: "Idle", "Running")
+// 하나의 애니메이션 클립
 struct AnimationClip
 {
     std::string name;

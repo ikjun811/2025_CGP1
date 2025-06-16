@@ -6,12 +6,12 @@
 
 #include "fontclass.h"
 #include "fontshaderclass.h"
-#include <vector> // <<-- vector 헤더 추가
+#include <vector> 
 
 class TextClass
 {
 private:
-	// SentenceType 구조체는 그대로 사용합니다.
+
 	struct SentenceType
 	{
 		ID3D11Buffer* vertexBuffer, * indexBuffer;
@@ -35,7 +35,7 @@ public:
 	void Shutdown();
 	bool Render(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX orthoMatrix);
 
-	// FPS와 CPU는 매 프레임 업데이트되므로 별도의 함수로 유지
+
 	bool SetFPS(int fps, ID3D11DeviceContext* deviceContext);
 	bool SetCPU(int cpu, ID3D11DeviceContext* deviceContext);
 
@@ -51,12 +51,10 @@ private:
 	int m_screenWidth, m_screenHeight;
 	XMMATRIX m_baseViewMatrix;
 
-	// <<-- 문장 관리 방식 변경 -->>
-	// 동적으로 변하는 문장들 (FPS, CPU)
+	
 	SentenceType* m_fpsSentence;
 	SentenceType* m_cpuSentence;
 
-	// 고정된 정보성 문장들
 	std::vector<SentenceType*> m_infoSentences;
 };
 

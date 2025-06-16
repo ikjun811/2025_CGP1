@@ -505,8 +505,6 @@ bool ModelClass::LoadDataStructures(const WCHAR* filename, int vertexCount, int 
 	}
 	fin.close();
 
-	// OBJ 파일은 인덱싱이 복잡하므로, 이전 방식처럼 정점을 중복 생성합니다.
-	// (이 부분을 개선하려면 Assimp같은 복잡한 인덱싱 재구성 로직이 필요합니다)
 	for (int i = 0; i < faceCount; i++)
 	{
 		// Vertex 1
@@ -522,7 +520,7 @@ bool ModelClass::LoadDataStructures(const WCHAR* filename, int vertexCount, int 
 		m_vertices.push_back({ temp_vertices[vIndex], temp_texcoords[tIndex], temp_normals[nIndex] });
 	}
 
-	// OBJ 로더는 인덱스 버퍼를 사용하지 않는 것처럼 처리합니다. (정점 중복)
+
 	m_indices.resize(m_vertices.size());
 	for (size_t i = 0; i < m_vertices.size(); ++i) {
 		m_indices[i] = i;
@@ -543,7 +541,6 @@ bool ModelClass::LoadAnimation(const WCHAR* animationFilename, const std::string
 		return false; // 애니메이션이 없으면 실패
 	}
 
-	// 이 파일의 첫 번째 애니메이션을 가져옵니다.
 	auto pAnimation = pScene->mAnimations[0];
 	AnimationClip clip;
 	clip.name = clipName;
@@ -558,7 +555,7 @@ bool ModelClass::LoadAnimation(const WCHAR* animationFilename, const std::string
 
 
 
-	// 각 뼈(채널)에 대한 애니메이션 데이터를 읽습니다.
+	// 각 뼈(채널)에 대한 애니메이션 데이터
 	for (unsigned int i = 0; i < pAnimation->mNumChannels; i++)
 	{
 		auto pChannel = pAnimation->mChannels[i];
@@ -793,8 +790,6 @@ bool ModelClass::LoadEmbeddedTexture(ID3D11Device* device, const aiScene* scene)
 			reinterpret_cast<const void*>(embeddedTexture->pcData), // 데이터 포인터
 			embeddedTexture->mWidth);                              // 데이터 크기
 	}
-
-	// TODO: 압축되지 않은 ARGB 데이터에 대한 처리 (필요 시 구현)
 
 	return false;
 }

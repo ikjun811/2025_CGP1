@@ -32,7 +32,7 @@ struct PixelInputType
 };
 
 
-// --- Vertex Shader (빌보딩 핵심 로직) ---
+//Vertex Shader 
 PixelInputType BillboardVertexShader(VertexInputType input)
 {
     PixelInputType output;
@@ -51,7 +51,7 @@ PixelInputType BillboardVertexShader(VertexInputType input)
     // 4. 실제 상향 벡터 계산
     float3 up = cross(look, right);
     
-    // 5. <<-- 이 부분이 핵심 수정 -->>
+    // 5.
     //    로컬 좌표에 추출한 스케일 값을 곱하여 최종 크기를 반영
     float4 worldPosition = float4(objectPosition, 1.0f);
     worldPosition.xyz += right * input.position.x * scaleX;
@@ -69,7 +69,7 @@ PixelInputType BillboardVertexShader(VertexInputType input)
 // --- Pixel Shader ---
 float4 BillboardPixelShader(PixelInputType input) : SV_TARGET
 {
-    // 알파 블렌딩을 위해, 텍스처의 알파 값이 0.1보다 작으면 픽셀을 버림 (discard)
+    // 알파 블렌딩을 위해, 텍스처의 알파 값이 0.1보다 작으면 픽셀을 버림
     float2 flippedTex = input.tex;
     flippedTex.y = 1.0f - flippedTex.y;
 

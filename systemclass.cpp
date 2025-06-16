@@ -58,7 +58,7 @@ bool SystemClass::Initialize()
 	{
 		return false;
 	}
-	// 초기 카메라 위치 및 회전 설정 (선택 사항)
+	// 초기 카메라 위치 및 회전 설정 
 	m_Camera->SetPosition(0.0f, 1.0f, -5.0f); // 예시 위치
 	m_Camera->SetRotation(0.0f, 0.0f, 0.0f); // 초기 회전 (Pitch, Yaw, Roll)
 

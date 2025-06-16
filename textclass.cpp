@@ -35,20 +35,18 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	result = m_FontShader->Initialize(device, hwnd);
 	if (!result) { MessageBox(hwnd, L"Could not initialize the font shader object.", L"Error", MB_OK); return false; }
 
-	// --- 동적 문장들(FPS, CPU) 초기화 ---
+	// 동적 문장들(FPS, CPU) 초기화
 	result = InitializeSentence(&m_fpsSentence, 16, device);
 	if (!result) return false;
 	result = InitializeSentence(&m_cpuSentence, 16, device);
 	if (!result) return false;
 
-	// 초기값 설정 (선택 사항)
+	// 초기값 설정
 	result = UpdateSentence(m_fpsSentence, "FPS = 0", 20, 20, 1.f, 1.f, 1.f, deviceContext);
 	if (!result) return false;
 	result = UpdateSentence(m_cpuSentence, "CPU = 0%", 20, 40, 1.f, 1.f, 1.f, deviceContext);
 	if (!result) return false;
 
-	// --- 고정 정보 문장들 초기화 및 설정 ---
-	// 헬퍼 람다 함수를 사용하여 코드 중복 줄이기
 	auto CreateInfoSentence = [&](const char* text, int x, int y) -> bool {
 		SentenceType* newSentence = nullptr;
 		if (!InitializeSentence(&newSentence, strlen(text) + 1, device)) return false;
@@ -66,6 +64,7 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	if (!CreateInfoSentence("Collision Detection", 20, 250)) return false;
 	if (!CreateInfoSentence("Raycast", 20, 280)) return false;
 	if (!CreateInfoSentence("Animation Fail", 20, 310)) return false;
+	if (!CreateInfoSentence("Total Polygon 517128", 20, 340)) return false;
 
 	return true;
 }
@@ -103,7 +102,7 @@ bool TextClass::Render(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix,
 	return true;
 }
 
-// <<-- UpdateSentence 함수 성능 개선 -->>
+
 bool TextClass::UpdateSentence(SentenceType* sentence, const char* text, int positionX, int positionY,
 	float red, float green, float blue, ID3D11DeviceContext* deviceContext)
 {
@@ -147,9 +146,6 @@ bool TextClass::UpdateSentence(SentenceType* sentence, const char* text, int pos
 }
 
 
-// --- 나머지 함수들은 기존 코드와 동일 ---
-// InitializeSentence, ReleaseSentence, RenderSentence, SetFPS, SetCPU
-// (이 함수들은 수정할 필요가 없습니다.)
 
 bool TextClass::InitializeSentence(SentenceType** sentence, int maxLength, ID3D11Device* device)
 {

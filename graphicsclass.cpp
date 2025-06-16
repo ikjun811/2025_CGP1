@@ -74,7 +74,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// 단일 텍스처 로드 람다 (기존)
+	// 단일 텍스처 로드 람다
 	auto loadModelSingle = [&](const wchar_t* modelFile, const wchar_t* textureFile = nullptr) -> bool {
 		auto model = make_unique<ModelClass>();
 		if (!model->Initialize(m_D3D->GetDevice(), modelFile, textureFile)) return false;
@@ -82,7 +82,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return true;
 		};
 
-	// 다중 텍스처 로드 람다 (새로 추가)
+	// 다중 텍스처 로드 람다 
 	auto loadModelMulti = [&](const wchar_t* modelFile, const vector<wstring>& textureFiles, ModelClass::ShaderType type) -> bool {
 		auto model = make_unique<ModelClass>();
 		if (!model->Initialize(m_D3D->GetDevice(), modelFile, textureFiles, type)) return false;
@@ -368,7 +368,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Lights.clear(); // 기존 광원 삭제
 	m_Lights.resize(7);
 
-	// 1. 전역 방향성 조명 (달빛처럼 약간 위에서 비스듬히)
+	// 1. 전역 방향성 조명 
 	m_Lights[0] = new LightClass();
 	m_Lights[0]->SetLightType(LightType::Directional);
 	m_Lights[0]->SetDirection(-0.5f, -0.7f, -0.5f); // 비스듬한 방향
@@ -380,7 +380,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Lights[1] = new LightClass();
 	m_Lights[1]->SetLightType(LightType::Spot);
 	m_Lights[1]->SetPosition(40.0f, 64.0f, 480.0f); // 등대 모델 위쪽
-	m_Lights[1]->SetDirection(0.0f, -0.3f, 1.0f); // 약간 아래 앞쪽을 향함
+	m_Lights[1]->SetDirection(0.0f, -0.3f, 1.0f); // 약간 아래 앞쪽
 	m_Lights[1]->SetDiffuseColor(50.0f, 50.0f, 20.0f, 1.0f); // 강한 노란빛
 	m_Lights[1]->SetSpecularColor(50.0f, 50.0f, 50.0f, 1.0f);
 	m_Lights[1]->SetSpecularPower(256.0f);
@@ -390,7 +390,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	m_Lights[2] = new LightClass();
 	m_Lights[2]->SetLightType(LightType::Spot);
 	m_Lights[2]->SetPosition(-10.0f, 5.0f, 24.0f);
-	m_Lights[2]->SetDirection(0.0f, -1.0f, 0.0f); // 바로 아래를 비춤
+	m_Lights[2]->SetDirection(0.0f, -1.0f, 0.0f); // 바로 아래
 	m_Lights[2]->SetDiffuseColor(80.0f, 60.0f, 20.0f, 1.0f);
 	m_Lights[2]->SetSpecularColor(8.0f, 6.0f, 2.0f, 1.0f);
 	m_Lights[2]->SetSpecularPower(128.0f);
@@ -472,7 +472,7 @@ void GraphicsClass::Shutdown()
 	if (m_StaticShader) { m_StaticShader->Shutdown(); delete m_StaticShader; m_StaticShader = nullptr; }
 	if (m_LightShader) { m_LightShader->Shutdown(); delete m_LightShader; m_LightShader = nullptr; }
 	if (m_TextureShader) { m_TextureShader->Shutdown(); delete m_TextureShader; m_TextureShader = nullptr; }
-	m_Models.clear(); // unique_ptr가 모든 ModelClass 메모리 자동 해제
+	m_Models.clear(); // unique_ptr ModelClass 메모리 자동 해제
 	m_SceneInstances.clear();
 	if (m_D3D) { m_D3D->Shutdown(); delete m_D3D; m_D3D = nullptr; }
 	if (m_PBRShader) { m_PBRShader->Shutdown(); delete m_PBRShader; m_PBRShader = nullptr; }
@@ -507,7 +507,7 @@ bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, InputClass*
 		XMFLOAT3 forward, right, up;
 		gameCamera->GetDirectionVectors(forward, right, up);
 		newBullet.direction = forward;
-		newBullet.speed = 50.0f; // 속도 현실적으로 조절
+		newBullet.speed = 50.0f; 
 		newBullet.lifeTime = 3.0f;
 		newBullet.collisionRadius = 0.2f;
 		newBullet.isMarkedForRemoval = false;
@@ -596,12 +596,12 @@ bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, InputClass*
 	// 2-3. 기타 월드 업데이트
 	for (auto& model : m_Models)
 	{
-		model->UpdateAnimation(deltaTime); // 애니메이션이 없어도 호출은 안전함
+		model->UpdateAnimation(deltaTime); // 애니메이션이 없어도 호출 문제없음
 	}
 	m_LighthouseRotationAngle += m_LighthouseRotationSpeed * deltaTime;
 	if (m_LighthouseRotationAngle > XM_2PI) { m_LighthouseRotationAngle -= XM_2PI; }
 
-	// 조명 1 (기존 노란색 등대 빛) - 시계 방향 회전
+	// 조명 1  - 시계 방향 회전
 	float newDirX1 = sinf(m_LighthouseRotationAngle);
 	float newDirZ1 = cosf(m_LighthouseRotationAngle);
 	if (m_Lights.size() > 1 && m_Lights[1] != nullptr)
@@ -609,7 +609,7 @@ bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, InputClass*
 		m_Lights[1]->SetDirection(newDirX1, -0.3f, newDirZ1);
 	}
 
-	// 조명 4 (새로운 청록색 등대 빛) - 반시계 방향, 약간 느리게 회전
+	// 조명 4  - 반시계 방향, 약간 느리게 회전
 	float newDirX2 = sinf(-m_LighthouseRotationAngle * 0.8f);
 	float newDirZ2 = cosf(-m_LighthouseRotationAngle * 0.8f);
 	if (m_Lights.size() > 4 && m_Lights[4] != nullptr)
@@ -617,7 +617,7 @@ bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, InputClass*
 		m_Lights[4]->SetDirection(newDirX2, -0.2f, newDirZ2);
 	}
 
-	// 조명 5 (새로운 붉은색 등대 빛) - 시계 방향, 약간 빠르게 회전
+	// 조명 5 - 시계 방향, 약간 빠르게 회전
 	float newDirX3 = sinf(m_LighthouseRotationAngle * 1.2f);
 	float newDirZ3 = cosf(m_LighthouseRotationAngle * 1.2f);
 	if (m_Lights.size() > 5 && m_Lights[5] != nullptr)
@@ -626,7 +626,7 @@ bool GraphicsClass::Frame(int fps, int cpu, CameraClass* gameCamera, InputClass*
 
 	}
 
-	// 조명 6 (등대 2번의 파란색 빛) - 반시계 방향, 중간 속도
+	// 조명 6  - 반시계 방향, 중간 속도
 	float newDirX4 = sinf(-m_LighthouseRotationAngle);
 	float newDirZ4 = cosf(-m_LighthouseRotationAngle);
 	if (m_Lights.size() > 6 && m_Lights[6] != nullptr)
@@ -731,15 +731,12 @@ bool GraphicsClass::Render(CameraClass* gameCamera)
 	
 
 		// 2. 배경 비트맵 렌더링 (Z-버퍼 끄기)
-		// 배경은 깊이와 상관없이 가장 먼저 그려져야 합니다.
 		m_D3D->TurnZBufferOff();
 		{
-			// 비트맵의 버텍스/인덱스 버퍼를 활성화하고 위치를 설정합니다.
 			m_Bitmap->Render(m_D3D->GetDeviceContext(), 0, 0);
-			// 텍스처 셰이더를 사용해 비트맵을 실제로 그립니다.
 			m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Bitmap->GetIndexCount(), worldMatrix, uiViewMatrix, orthoMatrix, m_Bitmap->GetTexture());
 		}
-		m_D3D->TurnZBufferOn(); // 3D 씬을 그리기 위해 Z-버퍼를 다시 켭니다.
+		m_D3D->TurnZBufferOn(); //Z-버퍼 활성화
 
 		// 3. 모델 렌더링
 		for (const auto& instance : m_SceneInstances)

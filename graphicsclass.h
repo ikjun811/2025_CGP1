@@ -109,11 +109,11 @@ private:
 	D3DClass* m_D3D;
 	GameState m_gameState;
 
-	// 고유한 모델들을 저장하는 벡터 (메모리 효율화)
+	// 모델들을 저장하는 벡터 
 	std::vector<std::unique_ptr<ModelClass>> m_Models;
 	// 씬에 배치될 객체 인스턴스들의 목록
 	std::vector<SceneObjectInstance> m_SceneInstances;
-	std::vector<BulletInstance> m_Bullets; // <<-- 총알 목록 추가
+	std::vector<BulletInstance> m_Bullets; // 총알 목록 추가
 	int m_bulletModelIndex = -1;
 
 	// 셰이더 객체들
@@ -134,12 +134,12 @@ private:
 
 	std::vector<int> m_terrainModelIndices; // 지형 모델의 인덱스를 저장할 벡터
 
-	BillboardShaderClass* m_BillboardShader; // <<-- 셰이더 객체 추가
+	BillboardShaderClass* m_BillboardShader; 
 	OceanShaderClass* m_OceanShader;
 
 	float m_totalTime;
-	int m_billboardModelIndex = -1; // <<-- 빌보드용 사각형 모델 인덱스
-	XMFLOAT3 m_airshipPosition;     // <<-- 비행선 위치
+	int m_billboardModelIndex = -1; // 빌보드용 사각형 모델 인덱스
+	XMFLOAT3 m_airshipPosition;     // 비행선 위치
 
 	BitmapClass* m_TitleBitmap;
 

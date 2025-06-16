@@ -130,15 +130,12 @@ float4 OceanPixelShader(PixelInputType input) : SV_TARGET
     float2 scrolledUV2 = input.tex - float2(time * 0.025f, time * 0.01f);
 
     // 2. 두 노멀 맵에서 노멀(법선) 값 샘플링
-    // 텍스처에 저장된 값(0~1 범위)을 실제 법선 벡터(-1~1 범위)로 변환
     float3 bumpNormal1 = (normalMap1.Sample(SampleType, scrolledUV1).rgb * 2.0f) - 1.0f;
     float3 bumpNormal2 = (normalMap2.Sample(SampleType, scrolledUV2).rgb * 2.0f) - 1.0f;
     
     // 3. 두 노멀 값을 더하여 최종 노멀 맵의 법선 벡터 생성
     float3 bumpNormal = bumpNormal1 + bumpNormal2;
 
-    // 4. TBN 행렬을 사용하여 노멀 맵의 법선 벡터를 월드 공간으로 변환
-    // TBN 행렬은 탄젠트 공간의 벡터를 월드 공간으로 변환하는 역할을 함
     float3x3 tbnMatrix = float3x3(input.tangent, input.binormal, input.normal);
     float3 finalNormal = normalize(mul(bumpNormal, tbnMatrix));
     

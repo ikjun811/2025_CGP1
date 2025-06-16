@@ -18,7 +18,7 @@ TextureShaderClass::~TextureShaderClass()
 
 bool TextureShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
-	// 2D 텍스처 전용 셰이더 파일을 로드합니다.
+	// 2D 텍스처 전용 셰이더 파일을 로드
 	return InitializeShader(device, hwnd, L"./data/texture.hlsl");
 }
 
@@ -70,7 +70,7 @@ bool TextureShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, const
 	result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &m_pixelShader);
 	if (FAILED(result)) return false;
 
-	// <<-- 정점 레이아웃 수정: NORMAL 제거 -->>
+	// 정점 레이아웃 수정 NORMAL 제거
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
 	polygonLayout[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	polygonLayout[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };

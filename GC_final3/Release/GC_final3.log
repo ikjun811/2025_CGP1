@@ -1,4 +1,9 @@
-﻿  graphicsclass.cpp
+﻿  StaticShaderClass.cpp
+C:\Users\0320\Documents\GitHub\2025_CGP1\StaticShaderClass.cpp(57,20): warning C4101: 'lightColorBufferDesc' :참조되지 않은 지역 변수입니다.
+C:\Users\0320\Documents\GitHub\2025_CGP1\StaticShaderClass.cpp(58,20): warning C4101: 'lightPositionBufferDesc' :참조되지 않은 지역 변수입니다.
+  billboardshaderclass.cpp
+  cameraclass.cpp
+  graphicsclass.cpp
 C:\Users\0320\Documents\GitHub\2025_CGP1\graphicsclass.cpp(458,11): warning C4316: 'TextClass': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\memory(3597,35): warning C4316: 'ModelClass': 힙에 할당된 개체가 16에 맞추어져 있지 않을 수도 있습니다
   (소스 파일 'graphicsclass.cpp'을(를) 컴파일하는 중)
@@ -7,10 +12,57 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.3412
           C:\Users\0320\Documents\GitHub\2025_CGP1\graphicsclass.cpp(79,16):
           컴파일되는 함수 템플릿 인스턴스화 'std::unique_ptr<ModelClass,std::default_delete<ModelClass>> std::make_unique<ModelClass,,0>(void)'에 대한 참조를 확인하세요.
   
+  inputclass.cpp
+  lightclass.cpp
+  lightshaderclass.cpp
+C:\Users\0320\Documents\GitHub\2025_CGP1\lightshaderclass.cpp(71,20): warning C4101: 'lightColorBufferDesc' :참조되지 않은 지역 변수입니다.
+C:\Users\0320\Documents\GitHub\2025_CGP1\lightshaderclass.cpp(70,20): warning C4101: 'matrixBufferDesc' :참조되지 않은 지역 변수입니다.
+C:\Users\0320\Documents\GitHub\2025_CGP1\lightshaderclass.cpp(72,20): warning C4101: 'lightPositionBufferDesc' :참조되지 않은 지역 변수입니다.
+  main.cpp
+  modelclass.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\xutility(4689,18): warning C4244: '=': 'wchar_t'에서 'char'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 'modelclass.cpp'을(를) 컴파일하는 중)
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\xutility(4689,18):
+      템플릿 인스턴스화 컨텍스트(가장 오래된 인스턴스화 컨텍스트)가
+          C:\Users\0320\Documents\GitHub\2025_CGP1\modelclass.cpp(34,26):
+          컴파일되는 함수 템플릿 인스턴스화 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)'에 대한 참조를 확인하세요.
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              C:\Users\0320\Documents\GitHub\2025_CGP1\modelclass.cpp(34,26):
+              'ModelClass::Initialize'에서 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string'에 대한 첫 번째 참조를 확인하세요.
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\xstring(793,17):
+          컴파일되는 함수 템플릿 인스턴스화 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<wchar_t*,wchar_t*,_Size_type>(_Iter,const _Sent,_Size)'에 대한 참조를 확인하세요.
+          with
+          [
+              _Size_type=unsigned int,
+              _Iter=wchar_t *,
+              _Sent=wchar_t *,
+              _Size=unsigned int
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\xstring(949,18):
+          컴파일되는 함수 템플릿 인스턴스화 '_OutIt *std::_Copy_n_unchecked4<wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)'에 대한 참조를 확인하세요.
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned int,
+              _InIt=wchar_t *,
+              _SizeTy=unsigned int
+          ]
+  
+  oceanshaderclass.cpp
+  pbrshaderclass.cpp
+  systemclass.cpp
+C:\Users\0320\Documents\GitHub\2025_CGP1\systemclass.cpp(278,2): warning C4065: switch문에 'default'가 있으나 'case' 레이블이 없습니다.
+  textclass.cpp
+  textureshaderclass.cpp
   코드를 생성하고 있습니다.
-  0 of 1624 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+  11 of 1624 functions ( 0.7%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    5 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
   GC_final3.vcxproj -> C:\Users\0320\Documents\GitHub\2025_CGP1\Release\GC_final3.exe
   'pwsh.exe'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는
